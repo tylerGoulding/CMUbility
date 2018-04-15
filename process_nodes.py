@@ -1,26 +1,22 @@
 import os
 import collections
 from collections import Counter, defaultdict
-from random import randint
-from datetime import datetime
-import numpy as np
 
-num_nodes = 8;
+num_nodes = 1;
 max_occur = 180;
-dirname = "C:\\Users\\Fatema Almeshqab\\Desktop\\CMUbility\\data_m3_test1\\";
+dirname = "/home/xfatema/cps-m3/";
 
 def main():
-  hour_list = [(x, defaultdict(int)) for x in xrange(num_nodes)];  
+  hour_list = [defaultdict(int) for x in xrange(num_nodes)];  
   time_dict = defaultdict(dict);
   for i in xrange(num_nodes):
     node_id = str.format('n{}',i);
     for filename in os.listdir(dirname):
       root, ext = os.path.splitext(filename)
       if root.startswith(str.format('n{}',i)) and ext == '.txt':
-        file = dirname + filename;
+        file = filename;
         break;
-
-    hour_dict = hour_list[i][1];
+    hour_dict = hour_list[i];
     count = 0;
     addr_set = set([]);
     with open(file) as f:
@@ -97,7 +93,7 @@ def main():
               if (address not in addr_set):
                 hour_dict[hour] += 1;
                 addr_set.add(address);
-   
+                
   for item in hour_list[0][1]:
     hour_list[1][1][item] = hour_list[0][1][item] + randint(-200,100);
     hour_list[2][1][item] = hour_list[0][1][item] + randint(0,400);
@@ -118,27 +114,26 @@ def main():
   n0n3_times = []
   for k in time_dict.keys():
 
-    if ('n0' in time_dict[k]) and ('n3' in time_dict[k]):
-        #print "path detected"
+    if ('n0' in time_dict[k]) and ('n5' in time_dict[k]):
+        print "path detected"
         n0 = max(time_dict[k]['n0'], key=lambda x: x[1])
         n0_time = datetime.strptime(n0[0], '%H:%M:%S.%f')
 
-        n3 = max(time_dict[k]['n3'], key=lambda x: x[1])
+        n3 = max(time_dict[k]['n1'], key=lambda x: x[1])
         n3_time = datetime.strptime(n3[0], '%H:%M:%S.%f')
         diff = n0_time - n3_time
         diff = abs(diff.total_seconds())
         if (diff > 15) and (diff < 900):
           n0n3_times.append(diff);
-    #else:
-        #print "not valid"
-  #print "----"
-  
+    else:
+        print "not valid"
+  print "----"
   a = np.array(n0n3_times)
   print "----"
 
   print np.sort(a)
   print np.mean(a)
-  #print stats.mode(a)
+  print stats.mode(a)
   print np.median(a)
   print np.std(a)
 
