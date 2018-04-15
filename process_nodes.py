@@ -1,22 +1,31 @@
 import os
 import collections
 from collections import Counter, defaultdict
+import os
+from random import randint
+from datetime import datetime
+import numpy as np
+import json
 
-num_nodes = 1;
+num_nodes = 8;
 max_occur = 180;
-dirname = "/home/xfatema/cps-m3/";
+#dirname = "/home/xfatema/cps-m3/";
+dirname = "C:\\Users\\Fatema Almeshqab\\Desktop\\CMUbility\\data_m3_test1\\";
+
+node_positions = ["n0","n1","n2","n3","n4","n5","n6","n7"]
+
 
 def main():
-  hour_list = [defaultdict(int) for x in xrange(num_nodes)];  
+  hour_list = [(x, defaultdict(int)) for x in xrange(num_nodes)];  
   time_dict = defaultdict(dict);
   for i in xrange(num_nodes):
     node_id = str.format('n{}',i);
     for filename in os.listdir(dirname):
       root, ext = os.path.splitext(filename)
       if root.startswith(str.format('n{}',i)) and ext == '.txt':
-        file = filename;
+        file = dirname + filename;
         break;
-    hour_dict = hour_list[i];
+    hour_dict = hour_list[i][1];
     count = 0;
     addr_set = set([]);
     with open(file) as f:
@@ -68,7 +77,6 @@ def main():
           hour_dict[hour] = 0;
           addr_set = set([]);
           
-
         else:
           if (len(line.split()) >= 2):
             address,rssi = line.split();
@@ -102,7 +110,6 @@ def main():
   for hour, dictionary in hour_list:
     print hour, dict.__repr__(dictionary)
   
-  
   print len(time_dict.keys())
 
   for k, v in time_dict.items():
@@ -110,28 +117,6 @@ def main():
     if len(v.keys()) == 1:
         del time_dict[k]
 
-<<<<<<< HEAD
-  print len(time_dict.keys())
-  n0n3_times = []
-  for k in time_dict.keys():
-
-    if ('n0' in time_dict[k]) and ('n5' in time_dict[k]):
-        print "path detected"
-        n0 = max(time_dict[k]['n0'], key=lambda x: x[1])
-        n0_time = datetime.strptime(n0[0], '%H:%M:%S.%f')
-
-        n3 = max(time_dict[k]['n1'], key=lambda x: x[1])
-        n3_time = datetime.strptime(n3[0], '%H:%M:%S.%f')
-        diff = n0_time - n3_time
-        diff = abs(diff.total_seconds())
-        if (diff > 15) and (diff < 900):
-          n0n3_times.append(diff);
-    else:
-        print "not valid"
-  print "----"
-  a = np.array(n0n3_times)
-  print "----"
-=======
   # print len(time_dict.keys())
   avgTime = defaultdict(dict);
   for s_node in node_positions:
@@ -162,13 +147,12 @@ def main():
         avgTime[s_node][e_node] = np.median(a)
   json_data = json.dumps(avgTime)
   print json.dumps(json.loads(json_data), indent=2)
->>>>>>> origin/master
 
-  print np.sort(a)
-  print np.mean(a)
-  print stats.mode(a)
-  print np.median(a)
-  print np.std(a)
+  #print np.sort(a)
+  #print np.mean(a)
+  #print stats.mode(a)
+  #print np.median(a)
+  #print np.std(a)
 
 if __name__ == '__main__':
     main()
