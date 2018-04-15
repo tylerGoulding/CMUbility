@@ -2,9 +2,14 @@ import os
 import collections
 from collections import Counter, defaultdict
 
+### useful arrays
+node_positions = ["n0","n1","n2","n3","n4","n5","n6","n7"]
+
 num_nodes = 1;
 max_occur = 180;
 dirname = "/home/xfatema/cps-m3/";
+
+
 
 def main():
   hour_list = [defaultdict(int) for x in xrange(num_nodes)];  
@@ -99,43 +104,50 @@ def main():
     hour_list[2][1][item] = hour_list[0][1][item] + randint(0,400);
     hour_list[1][1][item] += hour_list[4][1][item] - hour_list[0][1][item];
           
-  for hour, dictionary in hour_list:
-    print hour, dict.__repr__(dictionary)
+  # for hour, dictionary in hour_list:
+    # print hour, dict.__repr__(dictionary)
   
   
-  print len(time_dict.keys())
+  # print len(time_dict.keys())
 
   for k, v in time_dict.items():
     # print v
     if len(v.keys()) == 1:
         del time_dict[k]
 
-  print len(time_dict.keys())
-  n0n3_times = []
+  # print len(time_dict.keys())
+  avgTime = defaultdict(dict);
+  start2end_time = []
   for k in time_dict.keys():
+    for s_node in node_positions:
+      for e_node in node_positions:
+        if (s_node != e_node) and (s_node in time_dict[k]) and (e_node in time_dict[k]):
+            print "path detected"
+            n0 = max(time_dict[k][s_node], key=lambda x: x[1])
+            n0_time = datetime.strptime(n0[0], '%H:%M:%S.%f')
+            n3 = max(time_dict[k][e_node], key=lambda x: x[1])
+            n3_time = datetime.strptime(n3[0], '%H:%M:%S.%f')
+            diff = n0_time - n3_time
+            diff = abs(diff.total_seconds())
+            if (diff > 20) and (diff < 600):
+              start2end_time.append(diff);
+        else:
+            print "not valid"
+        a = np.array(start2end_time)
+        # print np.sort(a)
+        # print np.mean(a)
+        # print stats.mode(a)
+        print np.median(a)
+        # print np.std(a)
+        if s_node in avgTime:
+          avgTime[s_node][e_node] = np.median(a)
+        else:
+          avgTime[s_node] = {} 
+          avgTime[s_node][e_node] = np.median(a)
 
-    if ('n0' in time_dict[k]) and ('n5' in time_dict[k]):
-        print "path detected"
-        n0 = max(time_dict[k]['n0'], key=lambda x: x[1])
-        n0_time = datetime.strptime(n0[0], '%H:%M:%S.%f')
+  json_data = json.dumps(avgTime)
+  print json_data
 
-        n3 = max(time_dict[k]['n1'], key=lambda x: x[1])
-        n3_time = datetime.strptime(n3[0], '%H:%M:%S.%f')
-        diff = n0_time - n3_time
-        diff = abs(diff.total_seconds())
-        if (diff > 15) and (diff < 900):
-          n0n3_times.append(diff);
-    else:
-        print "not valid"
-  print "----"
-  a = np.array(n0n3_times)
-  print "----"
-
-  print np.sort(a)
-  print np.mean(a)
-  print stats.mode(a)
-  print np.median(a)
-  print np.std(a)
 
 if __name__ == '__main__':
     main()
