@@ -1,13 +1,15 @@
 import os
 import collections
 from collections import Counter, defaultdict
-
+import json
+import numpy as np
+from scipy import stats
 ### useful arrays
 node_positions = ["n0","n1","n2","n3","n4","n5","n6","n7"]
 
-num_nodes = 1;
+num_nodes = 8;
 max_occur = 180;
-dirname = "/home/xfatema/cps-m3/";
+dirname = "/Users/Tyler/Documents/GitHub/CMUbility/data_m3_test1/";
 
 
 
@@ -19,7 +21,7 @@ def main():
     for filename in os.listdir(dirname):
       root, ext = os.path.splitext(filename)
       if root.startswith(str.format('n{}',i)) and ext == '.txt':
-        file = filename;
+        file = dirname+filename;
         break;
     hour_dict = hour_list[i];
     count = 0;
@@ -99,10 +101,10 @@ def main():
                 hour_dict[hour] += 1;
                 addr_set.add(address);
                 
-  for item in hour_list[0][1]:
-    hour_list[1][1][item] = hour_list[0][1][item] + randint(-200,100);
-    hour_list[2][1][item] = hour_list[0][1][item] + randint(0,400);
-    hour_list[1][1][item] += hour_list[4][1][item] - hour_list[0][1][item];
+  # for item in hour_list[0][1]:
+  #   hour_list[1][1][item] = hour_list[0][1][item] + randint(-200,100);
+  #   hour_list[2][1][item] = hour_list[0][1][item] + randint(0,400);
+  #   hour_list[1][1][item] += hour_list[4][1][item] - hour_list[0][1][item];
           
   # for hour, dictionary in hour_list:
     # print hour, dict.__repr__(dictionary)
@@ -121,6 +123,7 @@ def main():
   for k in time_dict.keys():
     for s_node in node_positions:
       for e_node in node_positions:
+        print s_node,e_node
         if (s_node != e_node) and (s_node in time_dict[k]) and (e_node in time_dict[k]):
             print "path detected"
             n0 = max(time_dict[k][s_node], key=lambda x: x[1])
