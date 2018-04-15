@@ -6,12 +6,44 @@ from random import randint
 from datetime import datetime
 import numpy as np
 import json
+from scipy import stats
+
+
+graph = {'n0': ['n1','n3','n5'],
+         'n1': ['n0','n4','n5'],
+         'n2': ['n4','n7'],
+         'n3': ['n0','n5','n6'],
+         'n4': ['n1','n2','n5','n7'],
+         'n5': ['n0','n1','n3','n6'],
+         'n6': ['n3','n5','n7'],
+         'n7': ['n2','n4','n6']
+         }
+
+
+def find_shortest_path(graph, start, end, time = [], path=[]):
+    path = path + [start]
+    if start == end:
+        return path,[0]
+    if not graph.has_key(start):
+        return None
+
+    shortest = None
+    shortTime = None
+    for node in graph[start]:
+        if node not in path:
+            newpath = find_shortest_path(graph, node, end, time, path)
+            if newpath:
+                if not shortest or (sum(time) < sum(shortTime)):
+                    shortest = newpath
+                    shortTime = time
+    return shortest
+
 
 num_nodes = 8;
 max_occur = 180;
 #dirname = "/home/xfatema/cps-m3/";
 fatema_dirname = "C:\\Users\\Fatema Almeshqab\\Desktop\\CMUbility\\data_m3_test1\\";
-tyler_dirname = "/Users/Tyler/Documents/GitHub/CMUbility/data_m3_test1 "
+tyler_dirname = "/Users/Tyler/Documents/GitHub/CMUbility/data_m3_test1/"
 dirname = tyler_dirname
 node_positions = ["n0","n1","n2","n3","n4","n5","n6","n7"]
 
@@ -108,8 +140,8 @@ def main():
     hour_list[2][1][item] = hour_list[0][1][item] + randint(0,400);
     hour_list[1][1][item] += hour_list[4][1][item] - hour_list[0][1][item];
           
-  # for hour, dictionary in hour_list:
-  #   print hour, dict.__repr__(dictionary)
+  for hour, dictionary in hour_list:
+    print hour, dict.__repr__(dictionary)
 
   
   print len(time_dict.keys())
@@ -128,30 +160,30 @@ def main():
         # print s_node,e_node
         if (s_node != e_node) and (s_node in time_dict[k]) and (e_node in time_dict[k]):
             # print "path detected"
-            n0 = max(time_dict[k][s_node], key=lambda x: x[1])
-            n0_time = datetime.strptime(n0[0], '%H:%M:%S.%f')
-            n3 = max(time_dict[k][e_node], key=lambda x: x[1])
-            n3_time = datetime.strptime(n3[0], '%H:%M:%S.%f')
-            diff = n0_time - n3_time
+            sNode = max(time_dict[k][s_node], key=lambda x: x[1])
+            sNode_time = datetime.strptime(sNode[0], '%H:%M:%S.%f')
+            eNode = max(time_dict[k][e_node], key=lambda x: x[1])
+            eNode_time = datetime.strptime(eNode[0], '%H:%M:%S.%f')
+            diff = sNode_time - eNode_time
             diff = abs(diff.total_seconds())
             if (diff > 20) and (diff < 900):
               start2end_time.append(int(round(diff)));
       if (s_node != e_node) and (start2end_time != []):
         a = np.array(start2end_time)
-        med = stats.mode(a)
+        mean = np.mean(a)
+        mode = stats.mode(a)[0][0]
+        median = np.median(a)
         if s_node in avgTime:
-          avgTime[s_node][e_node] = med
+          avgTime[s_node][e_node] = (mean,mode,median);
+
         else:
           avgTime[s_node] = {} 
-          avgTime[s_node][e_node] = med
+          avgTime[s_node][e_node] = (mean,mode,median);
   json_data = json.dumps(avgTime)
+  with open('average_times.json', 'w') as outfile:
+    json.dump(avgTime, outfile)
   print json.dumps(json.loads(json_data), indent=2)
 
-  #print np.sort(a)
-  #print np.mean(a)
-  #print stats.mode(a)
-  #print np.median(a)
-  #print np.std(a)
 
 if __name__ == '__main__':
     main()
