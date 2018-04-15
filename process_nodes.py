@@ -120,13 +120,13 @@ def main():
 
   # print len(time_dict.keys())
   avgTime = defaultdict(dict);
-  start2end_time = []
-  for k in time_dict.keys():
-    for s_node in node_positions:
-      for e_node in node_positions:
+  for s_node in node_positions:
+    for e_node in node_positions:
+      start2end_time = []
+      for k in time_dict.keys():
         print s_node,e_node
         if (s_node != e_node) and (s_node in time_dict[k]) and (e_node in time_dict[k]):
-            print "path detected"
+            # print "path detected"
             n0 = max(time_dict[k][s_node], key=lambda x: x[1])
             n0_time = datetime.strptime(n0[0], '%H:%M:%S.%f')
             n3 = max(time_dict[k][e_node], key=lambda x: x[1])
@@ -135,22 +135,19 @@ def main():
             diff = abs(diff.total_seconds())
             if (diff > 20) and (diff < 600):
               start2end_time.append(diff);
-        else:
-            print "not valid"
-        a = np.array(start2end_time)
-        # print np.sort(a)
-        # print np.mean(a)
-        # print stats.mode(a)
-        print np.median(a)
-        # print np.std(a)
-        if s_node in avgTime:
-          avgTime[s_node][e_node] = np.median(a)
-        else:
-          avgTime[s_node] = {} 
-          avgTime[s_node][e_node] = np.median(a)
-
+      a = np.array(start2end_time)
+      # print np.sort(a)
+      # print np.mean(a)
+      # print stats.mode(a)
+      print np.median(a)
+      # print np.std(a)
+      if s_node in avgTime:
+        avgTime[s_node][e_node] = np.median(a)
+      else:
+        avgTime[s_node] = {} 
+        avgTime[s_node][e_node] = np.median(a)
   json_data = json.dumps(avgTime)
-  print json_data
+  print json.dumps(json.loads(json_data), indent=2)
 
 
 if __name__ == '__main__':
