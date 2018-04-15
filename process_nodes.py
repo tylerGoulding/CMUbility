@@ -1,30 +1,32 @@
 import os
 import collections
 from collections import Counter, defaultdict
-import json
-import numpy as np
-from scipy import stats
+import os
+from random import randint
 from datetime import datetime
-### useful arrays
-node_positions = ["n0","n1","n2","n3","n4","n5","n6","n7"]
+import numpy as np
+import json
 
 num_nodes = 8;
 max_occur = 180;
-dirname = "/Users/Tyler/Documents/GitHub/CMUbility/data_m3_test1/";
-
+#dirname = "/home/xfatema/cps-m3/";
+fatema_dirname = "C:\\Users\\Fatema Almeshqab\\Desktop\\CMUbility\\data_m3_test1\\";
+tyler_dirname = "/Users/Tyler/Documents/GitHub/CMUbility/data_m3_test1 "
+dirname = tyler_dirname
+node_positions = ["n0","n1","n2","n3","n4","n5","n6","n7"]
 
 
 def main():
-  hour_list = [defaultdict(int) for x in xrange(num_nodes)];  
+  hour_list = [(x, defaultdict(int)) for x in xrange(num_nodes)];  
   time_dict = defaultdict(dict);
   for i in xrange(num_nodes):
     node_id = str.format('n{}',i);
     for filename in os.listdir(dirname):
       root, ext = os.path.splitext(filename)
       if root.startswith(str.format('n{}',i)) and ext == '.txt':
-        file = dirname+filename;
+        file = dirname + filename;
         break;
-    hour_dict = hour_list[i];
+    hour_dict = hour_list[i][1];
     count = 0;
     addr_set = set([]);
     with open(file) as f:
@@ -76,7 +78,6 @@ def main():
           hour_dict[hour] = 0;
           addr_set = set([]);
           
-
         else:
           if (len(line.split()) >= 2):
             address,rssi = line.split();
@@ -102,16 +103,16 @@ def main():
                 hour_dict[hour] += 1;
                 addr_set.add(address);
                 
-  # for item in hour_list[0][1]:
-  #   hour_list[1][1][item] = hour_list[0][1][item] + randint(-200,100);
-  #   hour_list[2][1][item] = hour_list[0][1][item] + randint(0,400);
-  #   hour_list[1][1][item] += hour_list[4][1][item] - hour_list[0][1][item];
+  for item in hour_list[0][1]:
+    hour_list[1][1][item] = hour_list[0][1][item] + randint(-200,100);
+    hour_list[2][1][item] = hour_list[0][1][item] + randint(0,400);
+    hour_list[1][1][item] += hour_list[4][1][item] - hour_list[0][1][item];
           
   # for hour, dictionary in hour_list:
   #   print hour, dict.__repr__(dictionary)
+
   
-  
-  # print len(time_dict.keys())
+  print len(time_dict.keys())
 
   for k, v in time_dict.items():
     # print v
@@ -146,6 +147,11 @@ def main():
   json_data = json.dumps(avgTime)
   print json.dumps(json.loads(json_data), indent=2)
 
+  #print np.sort(a)
+  #print np.mean(a)
+  #print stats.mode(a)
+  #print np.median(a)
+  #print np.std(a)
 
 if __name__ == '__main__':
     main()
