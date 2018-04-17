@@ -6,7 +6,7 @@ from random import randint
 from datetime import datetime
 import numpy as np
 import json
-from scipy import stats
+#from scipy import stats
 
 
 graph = {'n0': ['n3','n5'], #'n1',
@@ -50,7 +50,7 @@ max_occur = 180;
 #dirname = "/home/xfatema/cps-m3/";
 fatema_dirname = "C:\\Users\\Fatema Almeshqab\\Desktop\\CMUbility\\data_m3_test1\\";
 tyler_dirname = "/Users/Tyler/Documents/GitHub/CMUbility/data_m3_test1/"
-dirname = tyler_dirname
+dirname = fatema_dirname
 node_positions = ["n0","n1","n2","n3","n4","n5","n6","n7"]
 
 
@@ -177,7 +177,7 @@ def main():
       if (s_node != e_node) and (start2end_time != []):
         a = np.array(start2end_time)
         mean = np.mean(a)
-        mode = stats.mode(a)[0][0]
+        mode = np.mean(a) #stats.mode(a)[0][0]
         median = np.median(a)
         if s_node in avgTime:
           avgTime[s_node][e_node] = (mean,mode,median);
@@ -185,10 +185,15 @@ def main():
         else:
           avgTime[s_node] = {} 
           avgTime[s_node][e_node] = (mean,mode,median);
-  # json_data = json.dumps(avgTime)
-  # with open('average_times.json', 'w') as outfile:
-  #   json.dump(avgTime, outfile)
-  # print json.dumps(json.loads(json_data), indent=2)
+
+  json_data = json.dumps(avgTime)
+
+  with open('density_per_hour.json', 'w') as outfile:
+    json.dump(dict(hour_list), outfile)
+
+  with open('average_times.json', 'w') as outfile:
+    json.dump(avgTime, outfile)
+  print json.dumps(json.loads(json_data), indent=2)
 
   print find_shortest_path(graph, 'n0', 'n7', avgTime)
 
