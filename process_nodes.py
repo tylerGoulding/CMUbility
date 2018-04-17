@@ -9,40 +9,34 @@ import json
 #from scipy import stats
 
 
-graph = {'n0': ['n3','n5'], #'n1',
-         # 'n1': ['n0','n4','n5'],
-         # 'n2': ['n4','n7'],
+graph = {'n0': ['n1','n3','n5'],
+         'n1': ['n0','n4','n5'],
+         'n2': ['n4','n7'],
          'n3': ['n0','n5','n6'],
-         'n4': ['n5','n7'], #'n1','n2'
-         'n5': ['n0','n3','n6'], # 'n1',
+         'n4': ['n1','n2','n5','n7'],
+         'n5': ['n0','n1','n3','n6'],
          'n6': ['n3','n5','n7'],
-         'n7': ['n4','n6'] #'n2',
+         'n7': ['n2','n4','n6']
          }
 
 
-def find_shortest_path(graph, start, end, td, time = [], path=[]):
+def find_shortest_path(graph, start, end, time = [], path=[]):
     path = path + [start]
-    print path
-    print time
     if start == end:
-        return path,time
+        return path,[0]
     if not graph.has_key(start):
-        return None,None
+        return None
 
     shortest = None
-    shortTime = [10000000000000]
+    shortTime = None
     for node in graph[start]:
         if node not in path:
-            time2 = time + [td[start][node][2]]
-            newpath,newtime = find_shortest_path(graph, node, end,td, time2, path)
+            newpath = find_shortest_path(graph, node, end, time, path)
             if newpath:
                 if not shortest or (sum(time) < sum(shortTime)):
-                    print "new min:",sum(time) 
-
                     shortest = newpath
-                    shortTime = newtime
-
-    return shortest,shortTime
+                    shortTime = time
+    return shortest
 
 
 num_nodes = 8;
@@ -185,7 +179,6 @@ def main():
         else:
           avgTime[s_node] = {} 
           avgTime[s_node][e_node] = (mean,mode,median);
-
   json_data = json.dumps(avgTime)
 
   with open('density_per_hour.json', 'w') as outfile:
@@ -195,7 +188,6 @@ def main():
     json.dump(avgTime, outfile)
   print json.dumps(json.loads(json_data), indent=2)
 
-  print find_shortest_path(graph, 'n0', 'n7', avgTime)
 
 if __name__ == '__main__':
     main()
