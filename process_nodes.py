@@ -10,21 +10,27 @@ import json
 graph = {'n0': ['n3','n5'], #'n1',
          # 'n1': ['n0','n4','n5'],
          # 'n2': ['n4','n7'],
-         'n3': ['n0','n5','n6'],
-         'n4': ['n5','n7'], #'n1','n2'
-         'n5': ['n0','n3','n6'], # 'n1',
+         'n3': ['n0','n4','n5','n6'],
+         'n4': ['n3','n5','n7'], #'n1','n2'
+         'n5': ['n0','n3','n4','n6'], # 'n1',
          'n6': ['n3','n5','n7'],
          'n7': ['n4','n6'] #'n2',
          }
+num_nodes = 8;
+max_occur = 180;
+#dirname = "/home/xfatema/cps-m3/";
+fatema_dirname = "C:\\Users\\Fatema Almeshqab\\Desktop\\CMUbility\\data_m3_test1\\";
+tyler_dirname = "/Users/Tyler/Documents/GitHub/CMUbility/data_m3_test1/"
+dirname = tyler_dirname
+node_positions = ["n0","n1","n2","n3","n4","n5","n6","n7"]
 
-def find_shortest_path(graph, start, end, td, time = [], path=[],allpaths=[]):
+
+def find_shortest_path(graph, start, end, td, time = [], path=[], allpaths=[]):
   path = path + [start]
-  # print path
-  # print time
   if start == end:
-      return path,time
+    return path,time,allpaths
   if not graph.has_key(start):
-      return None,None
+    return None,None,None,
   shortest = None
   shortTime = [10000000000000]
   for node in graph[start]:
@@ -36,19 +42,26 @@ def find_shortest_path(graph, start, end, td, time = [], path=[],allpaths=[]):
         if not shortest or (sum(time) < sum(shortTime)):
           shortest = newpath
           shortTime = newtime
-  # print allpaths.sort(key=lambda x: x[1])
   return shortest,shortTime,allpaths
 
-
-num_nodes = 8;
-max_occur = 180;
-#dirname = "/home/xfatema/cps-m3/";
-fatema_dirname = "C:\\Users\\Fatema Almeshqab\\Desktop\\CMUbility\\data_m3_test1\\";
-tyler_dirname = "/Users/Tyler/Documents/GitHub/CMUbility/data_m3_test1/"
-dirname = tyler_dirname
-node_positions = ["n0","n1","n2","n3","n4","n5","n6","n7"]
-
-
+def generate_paths(avgTime, write = True):
+  pathOutput = {}
+  for s_node in node_positions:
+    pathOutput[s_node] = {}
+  for s_node in node_positions:
+    for e_node in node_positions:
+      if (s_node != e_node):
+        shortest,shortTime,allpaths =  find_shortest_path(graph, s_node, e_node, avgTime,[],[],[])
+        if shortest != None:
+          allpaths.sort(key=lambda x: x[1])
+          if len(allpaths) >=3:
+            pathOutput[s_node][e_node] = allpaths[:3]
+          else:
+            pathOutput[s_node][e_node] = allpaths
+  if write:
+    with open('paths.json', 'w') as outfile:
+      json.dump(pathOutput, outfile)
+  return pathOutput
 def main():
   hour_list = [(x, defaultdict(int)) for x in xrange(num_nodes)];  
   time_dict = defaultdict(dict);
@@ -63,7 +76,6 @@ def main():
     count = 0;
     addr_set = set([]);
     with open(file) as f:
-      
       cnt = Counter();
       black_list = [];
       addr_list = [];
@@ -189,8 +201,20 @@ def main():
   with open('average_times.json', 'w') as outfile:
     json.dump(avgTime, outfile)
   print json.dumps(json.loads(json_data), indent=2)
-  ap =  find_shortest_path(graph, 'n0', 'n7', avgTime)[2]
-  ap.sort(key=lambda x: x[1])
-  print ap
+  generate_paths(avgTime);
+  # for s_node in node_positions:
+  #   for e_node in node_positions:
+  #     if (s_node != e_node):
+  #       ap =  find_shortest_path(graph, s_node, e_node, avgTime)
+  #       print ap
+  #       if ap[0] != None:
+  #         ap = ap[2]
+  #         ap.sort(key=lambda x: x[1])
+  #         if len(ap) >=3:
+  #           pathOutput[s_node][e_node] = ap[:3]
+  #         else:
+  #           pathOutput[s_node][e_node] = ap
+  # with open('paths.json', 'w') as outfile:
+  #   json.dump(pathOutput, outfile)
 if __name__ == '__main__':
     main()

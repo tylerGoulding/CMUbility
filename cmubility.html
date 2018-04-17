@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 
     <style>
@@ -48,6 +52,11 @@
   </head>
   <body>
     <script>
+      pathJSON;
+      $.getJSON("/Users/Tyler/Documents/GitHub/CMUbility/paths.json", function(json) {
+          pathJSON = json;
+          console.log(json); // this will show the info it in firebug console
+      });
       re = new RegExp("^([n][0-9])$");
 
       s_node = 0;
@@ -95,6 +104,11 @@
                         strokeOpacity: 1,
                         radius: 5
                     });
+        var currentPath = pathJSON[start][end][0][0];
+        var currentTime = pathJSON[start][end][0][1];
+        console.log(currentTime)
+        var routePath = [];
+        for 
 
       }
     </script>
@@ -452,7 +466,24 @@
                 radius: 3
               }));
         }
-
+        routePath = new google.maps.Polyline({
+          path: [],
+          strokeColor: '#FF0000',
+          strokeOpacity: 1.0,
+          strokeWeight: 3
+        });
+        // routePath = new google.maps.Polyline({
+        //   path: [],
+        //   strokeColor: '#FF0000',
+        //   strokeOpacity: 1.0,
+        //   strokeWeight: 3
+        // });
+        // routePath = new google.maps.Polyline({
+        //   path: [],
+        //   strokeColor: '#FF0000',
+        //   strokeOpacity: 1.0,
+        //   strokeWeight: 3
+        // });
         // poly1 = new google.maps.Polyline({
         //     strokeColor: '#FF0000',
         //     strokeOpacity: 1.0,
