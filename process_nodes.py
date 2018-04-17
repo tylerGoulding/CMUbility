@@ -9,34 +9,40 @@ import json
 from scipy import stats
 
 
-graph = {'n0': ['n1','n3','n5'],
-         'n1': ['n0','n4','n5'],
-         'n2': ['n4','n7'],
+graph = {'n0': ['n3','n5'], #'n1',
+         # 'n1': ['n0','n4','n5'],
+         # 'n2': ['n4','n7'],
          'n3': ['n0','n5','n6'],
-         'n4': ['n1','n2','n5','n7'],
-         'n5': ['n0','n1','n3','n6'],
+         'n4': ['n5','n7'], #'n1','n2'
+         'n5': ['n0','n3','n6'], # 'n1',
          'n6': ['n3','n5','n7'],
-         'n7': ['n2','n4','n6']
+         'n7': ['n4','n6'] #'n2',
          }
 
 
-def find_shortest_path(graph, start, end, time = [], path=[]):
+def find_shortest_path(graph, start, end, td, time = [], path=[]):
     path = path + [start]
+    print path
+    print time
     if start == end:
-        return path,[0]
+        return path,time
     if not graph.has_key(start):
-        return None
+        return None,None
 
     shortest = None
-    shortTime = None
+    shortTime = [10000000000000]
     for node in graph[start]:
         if node not in path:
-            newpath = find_shortest_path(graph, node, end, time, path)
+            time2 = time + [td[start][node][2]]
+            newpath,newtime = find_shortest_path(graph, node, end,td, time2, path)
             if newpath:
                 if not shortest or (sum(time) < sum(shortTime)):
+                    print "new min:",sum(time) 
+
                     shortest = newpath
-                    shortTime = time
-    return shortest
+                    shortTime = newtime
+
+    return shortest,shortTime
 
 
 num_nodes = 8;
@@ -179,11 +185,12 @@ def main():
         else:
           avgTime[s_node] = {} 
           avgTime[s_node][e_node] = (mean,mode,median);
-  json_data = json.dumps(avgTime)
-  with open('average_times.json', 'w') as outfile:
-    json.dump(avgTime, outfile)
-  print json.dumps(json.loads(json_data), indent=2)
+  # json_data = json.dumps(avgTime)
+  # with open('average_times.json', 'w') as outfile:
+  #   json.dump(avgTime, outfile)
+  # print json.dumps(json.loads(json_data), indent=2)
 
+  print find_shortest_path(graph, 'n0', 'n7', avgTime)
 
 if __name__ == '__main__':
     main()
