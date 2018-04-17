@@ -6,8 +6,6 @@ from random import randint
 from datetime import datetime
 import numpy as np
 import json
-#from scipy import stats
-
 
 graph = {'n0': ['n3','n5'], #'n1',
          # 'n1': ['n0','n4','n5'],
@@ -19,30 +17,27 @@ graph = {'n0': ['n3','n5'], #'n1',
          'n7': ['n4','n6'] #'n2',
          }
 
-
-def find_shortest_path(graph, start, end, td, time = [], path=[]):
-    path = path + [start]
-    print path
-    print time
-    if start == end:
-        return path,time
-    if not graph.has_key(start):
-        return None,None
-
-    shortest = None
-    shortTime = [10000000000000]
-    for node in graph[start]:
-        if node not in path:
-            time2 = time + [td[start][node][2]]
-            newpath,newtime = find_shortest_path(graph, node, end,td, time2, path)
-            if newpath:
-                if not shortest or (sum(time) < sum(shortTime)):
-                    print "new min:",sum(time) 
-
-                    shortest = newpath
-                    shortTime = newtime
-
-    return shortest,shortTime
+def find_shortest_path(graph, start, end, td, time = [], path=[],allpaths=[]):
+  path = path + [start]
+  # print path
+  # print time
+  if start == end:
+      return path,time
+  if not graph.has_key(start):
+      return None,None
+  shortest = None
+  shortTime = [10000000000000]
+  for node in graph[start]:
+    if node not in path:
+      time2 = time + [td[start][node][2]]
+      newpath,newtime = find_shortest_path(graph, node, end,td, time2, path,allpaths)[:2]
+      if newpath:
+        if ((newpath,sum(newtime)) not in allpaths): allpaths.append((newpath,sum(newtime)))
+        if not shortest or (sum(time) < sum(shortTime)):
+          shortest = newpath
+          shortTime = newtime
+  # print allpaths.sort(key=lambda x: x[1])
+  return shortest,shortTime,allpaths
 
 
 num_nodes = 8;
@@ -50,7 +45,7 @@ max_occur = 180;
 #dirname = "/home/xfatema/cps-m3/";
 fatema_dirname = "C:\\Users\\Fatema Almeshqab\\Desktop\\CMUbility\\data_m3_test1\\";
 tyler_dirname = "/Users/Tyler/Documents/GitHub/CMUbility/data_m3_test1/"
-dirname = fatema_dirname
+dirname = tyler_dirname
 node_positions = ["n0","n1","n2","n3","n4","n5","n6","n7"]
 
 
@@ -194,8 +189,8 @@ def main():
   with open('average_times.json', 'w') as outfile:
     json.dump(avgTime, outfile)
   print json.dumps(json.loads(json_data), indent=2)
-
-  print find_shortest_path(graph, 'n0', 'n7', avgTime)
-
+  ap =  find_shortest_path(graph, 'n0', 'n7', avgTime)[2]
+  ap.sort(key=lambda x: x[1])
+  print ap
 if __name__ == '__main__':
     main()
