@@ -6,38 +6,38 @@ from random import randint
 from datetime import datetime
 import numpy as np
 import json
-#from scipy import stats
 
-
-graph = {'n0': ['n1','n3','n5'],
-         'n1': ['n0','n4','n5'],
-         'n2': ['n4','n7'],
+graph = {'n0': ['n3','n5'], #'n1',
+         # 'n1': ['n0','n4','n5'],
+         # 'n2': ['n4','n7'],
          'n3': ['n0','n5','n6'],
-         'n4': ['n1','n2','n5','n7'],
-         'n5': ['n0','n1','n3','n6'],
+         'n4': ['n5','n7'], #'n1','n2'
+         'n5': ['n0','n3','n6'], # 'n1',
          'n6': ['n3','n5','n7'],
-         'n7': ['n2','n4','n6']
+         'n7': ['n4','n6'] #'n2',
          }
 
-
-def find_shortest_path(graph, start, end, time = [], path=[]):
-    path = path + [start]
-    if start == end:
-        return path,[0]
-    if not graph.has_key(start):
-        return None
-
-    shortest = None
-    shortTime = None
-    for node in graph[start]:
-        if node not in path:
-            newpath = find_shortest_path(graph, node, end, time, path)
-            if newpath:
-                if not shortest or (sum(time) < sum(shortTime)):
-                    shortest = newpath
-                    shortTime = time
-    return shortest
-
+def find_shortest_path(graph, start, end, td, time = [], path=[],allpaths=[]):
+  path = path + [start]
+  # print path
+  # print time
+  if start == end:
+      return path,time
+  if not graph.has_key(start):
+      return None,None
+  shortest = None
+  shortTime = [10000000000000]
+  for node in graph[start]:
+    if node not in path:
+      time2 = time + [td[start][node][2]]
+      newpath,newtime = find_shortest_path(graph, node, end,td, time2, path,allpaths)[:2]
+      if newpath:
+        if ((newpath,sum(newtime)) not in allpaths): allpaths.append((newpath,sum(newtime)))
+        if not shortest or (sum(time) < sum(shortTime)):
+          shortest = newpath
+          shortTime = newtime
+  # print allpaths.sort(key=lambda x: x[1])
+  return shortest,shortTime,allpaths
 
 num_nodes = 8;
 max_occur = 180;
@@ -134,15 +134,27 @@ def main():
               if (address not in addr_set):
                 hour_dict[hour] += 1;
                 addr_set.add(address);
-                
-  for item in hour_list[0][1]:
-    hour_list[1][1][item] = hour_list[0][1][item] + randint(-200,100);
-    hour_list[2][1][item] = hour_list[0][1][item] + randint(0,400);
-    hour_list[1][1][item] += hour_list[4][1][item] - hour_list[0][1][item];
-          
+  
+              
+  #for item in hour_list[0][1]:
+    #hour_list[1][1][item] = hour_list[0][1][item] + randint(-200,100);
+    #hour_list[2][1][item] = hour_list[0][1][item] + randint(0,500);
+    #hour_list[1][1][item] += hour_list[4][1][item] - hour_list[0][1][item];
+
+    #if (hour_list[1][1][item] < 0): hour_list[1][1][item] = 0;
+    #if (hour_list[2][1][item] < 0): hour_list[2][1][item] = 0;
+  
+  #taken from 1 random iteration from the code above
+  n1_density = [(9,602), (10,308), (11,631), (12,617), (13,770), (14,409), (15,533), (16,953), (17,801), (18,597), (19,727), (20,147)]
+  n2_density = [(9,825), (10,482), (11,653), (12,1030), (13,1072), (14,977), (15,1022), (16,1238), (17,1048), (18,861), (19,703), (20,396)]
+
+  for time, density in n1_density:
+  	hour_list[1][1][time] = density;
+  for time,density in n2_density:
+  	hour_list[2][1][time] = density
+
   for hour, dictionary in hour_list:
     print hour, dict.__repr__(dictionary)
-
   
   print len(time_dict.keys())
 
@@ -179,6 +191,25 @@ def main():
         else:
           avgTime[s_node] = {} 
           avgTime[s_node][e_node] = (mean,mode,median);
+
+  n1_times = [(0,0,79), (0,0,0), (0,0,143.78), (0,0,158), (0,0,80.58), (0,0,92.43), (0,0,194.34), (0,0,180.33)];
+  n2_times = [(0,0,169.43), (0,0,79), (0,0,0), (0,0,302.84), (0,0,107.44), (0,0,171.16), (0,0,139.04), (0,0,86.9)];
+  
+  avgTime["n1"] = {};
+  avgTime["n2"] = {};
+
+  #fill in n1
+  for i,node in enumerate(node_positions):
+  	if (node == "n1"): continue
+  	avgTime[node]["n1"] = n1_times[i];
+  	avgTime["n1"][node] = n1_times[i];
+
+  #fill in n2
+  for i,node in enumerate(node_positions):
+  	if (node == "n2"): continue
+  	avgTime[node]["n2"] = n2_times[i];
+  	avgTime["n2"][node] = n2_times[i];
+
   json_data = json.dumps(avgTime)
 
   with open('density_per_hour.json', 'w') as outfile:
@@ -188,6 +219,9 @@ def main():
     json.dump(avgTime, outfile)
   print json.dumps(json.loads(json_data), indent=2)
 
+  ap =  find_shortest_path(graph, 'n0', 'n7', avgTime)[2]
+  ap.sort(key=lambda x: x[1])
+  print ap
 
 if __name__ == '__main__':
     main()
