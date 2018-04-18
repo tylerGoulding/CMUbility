@@ -5,6 +5,62 @@
   src="https://code.jquery.com/jquery-3.3.1.min.js"
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
+  <script type="text/javascript">
+    function Label(opt_options) {
+  // Initialization
+  this.setValues(opt_options);
+  
+  // Label specific
+  var span = this.span_ = document.createElement('span');
+  span.style.cssText = 'position: relative; left: -50%; top: -8px; ' +
+                       'white-space: nowrap; border: 1px solid blue; ' +
+                       'padding: 2px; background-color: white';
+  
+  var div = this.div_ = document.createElement('div');
+  div.appendChild(span);
+  div.style.cssText = 'position: absolute; display: none';
+}
+Label.prototype = new google.maps.OverlayView();
+
+// Implement onAdd
+Label.prototype.onAdd = function() {
+  var pane = this.getPanes().floatPane;
+  pane.appendChild(this.div_);
+  
+  // Ensures the label is redrawn if the text or position is changed.
+  var me = this;
+  this.listeners_ = [
+    google.maps.event.addListener(this, 'position_changed',
+      function() { me.draw(); }),
+    google.maps.event.addListener(this, 'text_changed',
+      function() { me.draw(); })
+  ];
+};
+
+// Implement onRemove
+Label.prototype.onRemove = function() {
+  var i, I;
+  this.div_.parentNode.removeChild(this.div_);
+  
+  // Label is removed from the map, stop updating its position/text.
+  for (i = 0, I = this.listeners_.length; i < I; ++i) {
+    google.maps.event.removeListener(this.listeners_[i]);
+  }
+};
+
+// Implement draw
+Label.prototype.draw = function() {
+  var projection = this.getProjection();
+  var position = projection.fromLatLngToDivPixel(this.get('position'));
+  
+  var div = this.div_;
+  div.style.left = position.x + 'px';
+  div.style.top = position.y + 'px';
+  div.style.display = 'block';
+  
+  this.span_.innerHTML = this.get('text').toString();
+};
+  </script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 
     <style>
@@ -52,6 +108,11 @@
   </head>
   <body>
     <script>
+      if (!Array.prototype.last){
+          Array.prototype.last = function(){
+              return this[this.length - 1];
+          };
+      };
       pathJSON ="";
       $.getJSON("/Users/Tyler/Documents/GitHub/CMUbility/paths.json", function(json) {
           pathJSON = json;
@@ -61,6 +122,28 @@
 
       s_node = 0;
       e_node = 0;
+      function clearRoute(){
+        node_circles[e_node].setOptions({
+                strokeColor: '#FFFFFF',
+                strokeOpacity: 0.5,
+                strokeWeight: 2,
+                fillColor: '#FFFFFF',
+                fillOpacity: .7,
+                radius: 3
+          });
+      node_circles[s_node].setOptions({
+                strokeColor: '#FFFFFF',
+                strokeOpacity: 0.5,
+                strokeWeight: 2,
+                fillColor: '#FFFFFF',
+                fillOpacity: .7,
+                radius: 3
+          });
+        routePath0.setMap(null);
+        routePath1.setMap(null);
+        routePath2.setMap(null);
+        $( 'button.clear' ).attr( 'disabled', true);
+      }
       function calcRoute() {
           node_circles[s_node].setOptions({
                 strokeColor: '#FFFFFF',
@@ -104,6 +187,35 @@
                         strokeOpacity: 1,
                         radius: 5
                     });
+        var currentPath = pathJSON[start][end][1][0];
+        var currentTime = pathJSON[start][end][1][1];
+        console.log(currentTime)
+        var rP = [];
+        var pathLen = currentPath.length;
+        for (var i = 0; i < pathLen; i++) {
+          var node =currentPath[i];
+          console.log(node);
+          var p_node = parseInt(node.substring(1,2));
+          rP.push(nodes[p_node]);
+        }
+        console.log(rP);
+        routePath1.setPath(rP);
+        routePath1.setMap(map);
+
+        var currentPath = pathJSON[start][end][2][0];
+        var currentTime = pathJSON[start][end][2][1];
+        console.log(currentTime)
+        var rP = [];
+        var pathLen = currentPath.length;
+        for (var i = 0; i < pathLen; i++) {
+          var node =currentPath[i];
+          console.log(node);
+          var p_node = parseInt(node.substring(1,2));
+          rP.push(nodes[p_node]);
+        }
+        console.log(rP);
+        routePath2.setPath(rP);
+        routePath2.setMap(map);
         var currentPath = pathJSON[start][end][0][0];
         var currentTime = pathJSON[start][end][0][1];
         console.log(currentTime)
@@ -112,14 +224,19 @@
         for (var i = 0; i < pathLen; i++) {
           var node =currentPath[i];
           console.log(node);
-
-          var p_node = parseInt(start.substring(1,2));
+          var p_node = parseInt(node.substring(1,2));
           rP.push(nodes[p_node]);
-
         }
         console.log(rP);
-        routePath.setPath(rP);
-        routePath.setMap(map);
+        routePath0.setPath(rP);
+        routePath0.setMap(map);
+
+        inBetween = google.maps.geometry.spherical.interpolate(rP[0], rp.last(), 0.5);  
+        
+          // create an invisible marker
+
+
+         $( 'button.clear' ).attr( 'disabled', false);
       }
     </script>
     <div class="container-fluid">
@@ -157,6 +274,8 @@
                     </select>
                   </div>
                   <button type='button' class="btn btn-default" onClick="calcRoute()">Compute Route</button>
+                  <button type='button' class="btn btn-default clear" onClick="clearRoute()">Clear Route</button>
+                  <script> $( 'button.clear' ).attr( 'disabled', true);</script>
                 </form>
 
                 </div>
@@ -476,24 +595,30 @@
                 radius: 3
               }));
         }
-        routePath = new google.maps.Polyline({
+        routePath0 = new google.maps.Polyline({
           path: [],
-          strokeColor: '#FF0000',
-          strokeOpacity: 1.0,
-          strokeWeight: 3
+          strokeColor: '#1E90FF',
+          strokeOpacity: 1,
+          strokeWeight: 8
         });
-        // routePath = new google.maps.Polyline({
-        //   path: [],
-        //   strokeColor: '#FF0000',
-        //   strokeOpacity: 1.0,
-        //   strokeWeight: 3
-        // });
-        // routePath = new google.maps.Polyline({
-        //   path: [],
-        //   strokeColor: '#FF0000',
-        //   strokeOpacity: 1.0,
-        //   strokeWeight: 3
-        // });
+        routePath1 = new google.maps.Polyline({
+          path: [],
+          strokeColor: '#AAAAAA',
+          strokeOpacity: 0.6,
+          strokeWeight: 6
+        });
+        routePath2 = new google.maps.Polyline({
+          path: [],
+          strokeColor: '#AAAAAA',
+          strokeOpacity: 0.6,
+          strokeWeight: 6
+        });
+        labelMarker = new google.maps.Marker({  
+          position: [],  
+          map: map,
+          visible: false
+        });
+        routelabel = new Label();
         // poly1 = new google.maps.Polyline({
         //     strokeColor: '#FF0000',
         //     strokeOpacity: 1.0,
@@ -507,6 +632,7 @@
         //     map: map,
         //   });
         // update();
+
         heatmap = new google.maps.visualization.HeatmapLayer({
           data: getPoints(),
           map: map,
@@ -520,6 +646,7 @@
         var heatpoints = []; 
 
       }
+
 function generatePath() {
 
   //var path = [nodes[0], nodes[0]];
@@ -572,16 +699,10 @@ function generatePath() {
     n2ton3.push(google.maps.geometry.spherical.interpolate(path[0], path[1], step*i));
   } */
 }
-
+      /*function lerp(a, b, f) {
+          return a + f * (b - a);
+      }*/
       function getPoints() {
-      //   for (var i = 0; i < results.features.length; i++) {
-      //     var coords = results.features[i].geometry.coordinates;
-      //     var latLng = new google.maps.LatLng(coords[1],coords[0]);
-      //     var marker = new google.maps.Marker({
-      //       position: latLng,
-      //       map: map
-      //     });
-      //   }
         var data = [        
                 
         ];
@@ -596,36 +717,27 @@ function generatePath() {
         }
 
         /*
+=======
+        f = 1/n0ton1.length;
+        n0 = 2.4
+        n1 = 6.0
+>>>>>>> origin/master
         for (i = 0; i < n0ton1.length; i++) { 
-          data.push({location: n0ton1[i], weight: .4});
+          f = i/n0ton1.length;
+          data.push({location: n0ton1[i], weight: lerp(n0, n1, f)});
         }
         for (i = 0; i < n0ton2.length; i++) { 
-          data.push({location: n0ton2[i], weight: .4});
+          data.push({location: n0ton2[i], weight: 4});
         }
         for (i = 0; i < n1ton2.length; i++) { 
-          data.push({location: n1ton2[i], weight: .25});
+          data.push({location: n1ton2[i], weight: 4});
         }
         for (i = 0; i < n2ton3.length; i++) { 
-          data.push({location: n2ton3[i], weight: .9});
+          data.push({location: n2ton3[i], weight: 4});
         }
         */
         return data;//[
-        // {location: new google.maps.LatLng(40.443393,-79.939046), weight: 100},
 
-//
-//         {location: new google.maps.LatLng(40.443131, -79.939135), weight: 2},
-
-
-// //
-//         {location: new google.maps.LatLng(40.442904, -79.939229), weight: 0.5},
-
-//           //
-//         {location: new google.maps.LatLng(40.442615, -79.939434), weight: 0.5},
-
-// //
-        // {location: new google.maps.LatLng(40.442308,-79.939905), weight: 0.5},
-        // middle
-        // ];
       }
     </script>
     <script async defer
