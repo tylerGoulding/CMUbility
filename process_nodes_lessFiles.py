@@ -6,13 +6,13 @@ from random import randint
 from datetime import datetime
 import numpy as np
 import json
-
+import graph
 graph = {'n0': ['n1','n3','n5'],
          'n1': ['n0','n2','n4','n5'],
          'n2': ['n1','n4','n7'],
          'n3': ['n0','n4','n5','n6'],
-         'n4': ['n1', 'n2','n3','n5','n7'], #'n1','n2'
-         'n5': ['n0', 'n1','n3','n4','n6'], # 'n1',
+         'n4': ['n1','n2','n3','n5','n7'], #'n1','n2'
+         'n5': ['n0','n1','n3','n4','n6'], # 'n1',
          'n6': ['n3','n5','n7'],
          'n7': ['n2','n4','n6'] #'n2',
          }
@@ -22,7 +22,8 @@ max_occur = 180;
 #dirname = "/home/xfatema/cps-m3/";
 fatema_dirname = "C:\\Users\\Fatema Almeshqab\\Desktop\\CMUbility\\data_m3_test1\\";
 tyler_dirname = "/Users/Tyler/Documents/GitHub/CMUbility/data_m3_test1/"
-dirname = fatema_dirname
+dirname = tyler_dirname
+
 node_positions = ["n0","n1","n2","n3","n4","n5","n6","n7"]
 
 def find_shortest_path(graph, start, end, td, time = [], path=[], allpaths=[]):
@@ -287,7 +288,7 @@ def main():
     #print ap
     #print hourlyAvgTime[hour];
 
-    generate_paths(hourlyAvgTime[hour],hour);
+    generate_paths(hourlyAvgTime[hour],hour,False);
     # for s_node in node_positions:
     #   for e_node in node_positions:
     #     if (s_node != e_node):

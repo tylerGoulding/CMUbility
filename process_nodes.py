@@ -107,13 +107,10 @@ def main():
       for addr in cnt:
         if (cnt[addr] > max_occur):
           black_list.append(addr);
-      
       currentTimeStamp = '';
       hour = 0;
       hour_seen = False;
       for line in f.readlines():
-      # for heatmap
-        # time stamp
         if line.startswith('*'):
           count += 1;
           currentTimeStamp = line.split()[2];
@@ -136,9 +133,7 @@ def main():
           if (len(line.split()) >= 2):
             address,rssi = line.split();
             rssi = int(rssi)
-            if (address in black_list):
-              continue;
-            else:
+            if (address not in black_list):
             # 900 seconds or 15 mins
               if (count==90):
                 count = 0;
@@ -169,7 +164,6 @@ def main():
   #taken from 1 random iteration from the code above
   n1_density = [(9,602), (10,308), (11,631), (12,617), (13,770), (14,409), (15,533), (16,953), (17,801), (18,597), (19,727), (20,147)]
   n2_density = [(9,825), (10,482), (11,653), (12,1030), (13,1072), (14,977), (15,1022), (16,1238), (17,1048), (18,861), (19,703), (20,396)]
-
   for time, density in n1_density:
   	hour_list[1][1][time] = density;
   for time,density in n2_density:
@@ -178,14 +172,14 @@ def main():
   for hour, dictionary in hour_list:
     print hour, dict.__repr__(dictionary)
   
-  print len(time_dict.keys())
+  totaladdr =  len(time_dict.keys())
 
+  #strip away all nodes that only show up once
   for k, v in time_dict.items():
-    # print v
     if len(v.keys()) == 1:
         del time_dict[k]
-
-  # print len(time_dict.keys())
+  non_unique_addr = totaladdr - len(time_dict.keys());
+  print "Trackable Devices = ", non_unique_addr
   avgTime = defaultdict(dict);
   for s_node in node_positions:
     for e_node in node_positions:

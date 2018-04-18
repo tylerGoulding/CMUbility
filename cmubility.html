@@ -108,9 +108,16 @@
         var currentTime = pathJSON[start][end][0][1];
         console.log(currentTime)
         var routePath = [];
-        for 
+        var pathLen = currentPath.length;
+        for (var i = 0; i < pathLen; i++) {
+          var node =currentPath[i];
+          var p_node = parseInt(start.substring(1,2));
 
-      }
+
+          routePath.push(nodes[p_node]);
+
+        }
+        console.log(routePath);
     </script>
     <div class="container-fluid">
 
