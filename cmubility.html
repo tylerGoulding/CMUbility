@@ -8,7 +8,7 @@
   <script type="text/javascript">
     function Label(opt_options) {
   // Initialization
-  this.setValues(opt_options);
+  //this.setValues(opt_options);
   
   // Label specific
   var span = this.span_ = document.createElement('span');
@@ -113,11 +113,29 @@ Label.prototype.draw = function() {
               return this[this.length - 1];
           };
       };
-      pathJSON ="";
+      /*
       $.getJSON("/Users/Tyler/Documents/GitHub/CMUbility/paths.json", function(json) {
           pathJSON = json;
           console.log(json); // this will show the info it in firebug console
+      }); 
+
+      $.getJSON("/Users/Tyler/Documents/GitHub/CMUbility/density_per_hour.json", function(density) {
+          densityJSON = density;
+          console.log(density); // this will show the info it in firebug console
+      }); 
+
+      */
+
+      $.getJSON("file:///C:/Users/Fatema Almeshqab/Desktop/CMUbility/paths.json", function(json) {
+          pathJSON = json;
+          console.log(json); // this will show the info it in firebug console
       });
+
+      $.getJSON("file:///C:/Users/Fatema Almeshqab/Desktop/CMUbility/density_per_hour.json", function(density) {
+          densityJSON = density;
+          console.log(density); // this will show the info it in firebug console
+      });
+
       re = new RegExp("^([n][0-9])$");
 
       s_node = 0;
@@ -187,6 +205,10 @@ Label.prototype.draw = function() {
                         strokeOpacity: 1,
                         radius: 5
                     });
+
+        var time_select = document.getElementById("time");
+        var hour = time_select.options[time_select.selectedIndex].value;
+        
         var currentPath = pathJSON[start][end][1][0];
         var currentTime = pathJSON[start][end][1][1];
         console.log(currentTime)
@@ -231,7 +253,7 @@ Label.prototype.draw = function() {
         routePath0.setPath(rP);
         routePath0.setMap(map);
 
-        inBetween = google.maps.geometry.spherical.interpolate(rP[0], rp.last(), 0.5);  
+        inBetween = google.maps.geometry.spherical.interpolate(rP[0], rP.last(), 0.5);  
         
           // create an invisible marker
 
@@ -258,19 +280,19 @@ Label.prototype.draw = function() {
                     <label for="endNode">Ending Node: </label>
                     <input type="text" class="form-control" id="endNode" placeholder="nY">
                     <label for="time">Select Time:</label>
-                    <select class="form-control" id="time">
-                      <option>9:00</option>
-                      <option>10:00</option>
-                      <option>11:00</option>
-                      <option>12:00</option>
-                      <option>13:00</option>
-                      <option>14:00</option>
-                      <option>15:00</option>
-                      <option>16:00</option>
-                      <option>17:00</option>
-                      <option>18:00</option>
-                      <option>19:00</option>
-                      <option>20:00</option>
+                    <select class="form-control" id="time" onchange="updateHeatmap();">
+                      <option value=9>9:00</option>
+                      <option value=10>10:00</option>
+                      <option value=11>11:00</option>
+                      <option value=12>12:00</option>
+                      <option value=13>13:00</option>
+                      <option value=14>14:00</option>
+                      <option value=15>15:00</option>
+                      <option value=16>16:00</option>
+                      <option value=17>17:00</option>
+                      <option value=18>18:00</option>
+                      <option value=19>19:00</option>
+                      <option value=20>20:00</option>
                     </select>
                   </div>
                   <button type='button' class="btn btn-default" onClick="calcRoute()">Compute Route</button>
@@ -633,25 +655,32 @@ Label.prototype.draw = function() {
         //   });
         // update();
 
+        var time_select = document.getElementById("time");
+        var hour = time_select.options[time_select.selectedIndex].value;
+        //var hour = 9 //document.getElementById("time");
+        console.log(hour)
         heatmap = new google.maps.visualization.HeatmapLayer({
-          data: getPoints(),
+          data: getPoints(hour),
           map: map,
-          radius: 20,
+          radius: 18,
           opacity:.5,
+          dissipating: true
           // gradient: Ggradient
         });
       }
 
-      function generateHeat(){
+      function updateHeatmap(){
         var heatpoints = []; 
-
+        var time_select = document.getElementById("time");
+        var hour = time_select.options[time_select.selectedIndex].value;
+        heatmap.setData(getPoints(hour));
       }
 
 function generatePath() {
 
   //var path = [nodes[0], nodes[0]];
-  var graph = [[nodes[1],nodes[3],nodes[5]], [nodes[2],nodes[4],nodes[5]], [nodes[4],nodes[7]],
-               [nodes[4],nodes[5],nodes[6]], [nodes[5],nodes[7]],[nodes[6]], [nodes[7]]];
+  graph = [[nodes[1],nodes[3],nodes[5]], [nodes[2],nodes[4],nodes[5]], [nodes[4],nodes[7]],
+          [nodes[5],nodes[6]], [nodes[5],nodes[7]],[nodes[6]], [nodes[7]]];
 
   generated_paths = Array(graph.length);
   for (var p1 = 0; p1 < graph.length; p1++) {
@@ -663,7 +692,7 @@ function generatePath() {
 
   for (var p1 = 0; p1 < graph.length; p1++) {
     for (var p2 = 0; p2 < graph[p1].length; p2++) {
-      var distance = Math.trunc(google.maps.geometry.spherical.computeDistanceBetween(nodes[p1], graph[p1][p2])); //should be in meters
+      var distance = Math.trunc(google.maps.geometry.spherical.computeDistanceBetween(nodes[p1], graph[p1][p2])/4); //should be in meters
       console.log(distance);
       for (var point = 0; point < distance; point++) {
         var step = 1/distance;
@@ -699,19 +728,27 @@ function generatePath() {
     n2ton3.push(google.maps.geometry.spherical.interpolate(path[0], path[1], step*i));
   } */
 }
-      /*function lerp(a, b, f) {
+      function lerp(a, b, f) {
           return a + f * (b - a);
-      }*/
-      function getPoints() {
+      }
+      function getPoints(hour) {
         var data = [        
                 
         ];
         //var path = [];
         // var middle = google.maps.geometry.spherical.interpolate(path[0], path[1], .5);
         for (var p1 = 0; p1 < generated_paths.length; p1++) {
+          p1_node = 'n' + p1;
+          s_density = densityJSON[p1_node][hour];
+          s_density = (s_density*8)/10
           for (var p2 = 0; p2 < generated_paths[p1].length; p2++) {
+            p2_node = 'n' + nodes.indexOf(graph[p1][p2]);
+            e_density = densityJSON[p2_node][hour];
+                e_density = (e_density*8)/10
             for (var point = 0; point < generated_paths[p1][p2].length; point++) {
-                data.push({location: generated_paths[p1][p2][point], weight: 4});
+                f = point/generated_paths[p1][p2].length;
+ 
+                data.push({location: generated_paths[p1][p2][point], weight: lerp(s_density, e_density, f)});
             }
           }
         }
