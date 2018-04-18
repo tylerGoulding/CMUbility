@@ -52,7 +52,7 @@
   </head>
   <body>
     <script>
-      pathJSON;
+      pathJSON ="";
       $.getJSON("/Users/Tyler/Documents/GitHub/CMUbility/paths.json", function(json) {
           pathJSON = json;
           console.log(json); // this will show the info it in firebug console
@@ -107,17 +107,20 @@
         var currentPath = pathJSON[start][end][0][0];
         var currentTime = pathJSON[start][end][0][1];
         console.log(currentTime)
-        var routePath = [];
+        var rP = [];
         var pathLen = currentPath.length;
         for (var i = 0; i < pathLen; i++) {
           var node =currentPath[i];
+          console.log(node);
+
           var p_node = parseInt(start.substring(1,2));
-
-
-          routePath.push(nodes[p_node]);
+          rP.push(nodes[p_node]);
 
         }
-        console.log(routePath);
+        console.log(rP);
+        routePath.setPath(rP);
+        routePath.setMap(map);
+      }
     </script>
     <div class="container-fluid">
 
@@ -204,8 +207,8 @@
           new google.maps.LatLng(40.443492,-79.941360), //n1
           new google.maps.LatLng(40.444303, -79.943086), //n2
           new google.maps.LatLng(40.442254,-79.939639), //n3
-          new google.maps.LatLng(40.442498,-79.940475), //n4
           new google.maps.LatLng(40.442880,-79.942732), //n5
+          new google.maps.LatLng(40.442498,-79.940475), //n4
           new google.maps.LatLng(40.441827, -79.941491), //n5
           new google.maps.LatLng(40.442228,-79.943787), //n7
         ];
