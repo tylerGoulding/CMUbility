@@ -10,8 +10,8 @@ import json
 graph = {'n0': ['n1','n3','n5'],
          'n1': ['n0','n2','n4','n5'],
          'n2': ['n1','n4','n7'],
-         'n3': ['n0','n4','n5','n6'],
-         'n4': ['n1', 'n2','n3','n5','n7'], #'n1','n2'
+         'n3': ['n0','n5','n6'],
+         'n4': ['n1','n2','n5','n7'], #'n1','n2'
          'n5': ['n0', 'n1','n3','n4','n6'], # 'n1',
          'n6': ['n3','n5','n7'],
          'n7': ['n2','n4','n6'] #'n2',
@@ -43,14 +43,6 @@ def find_shortest_path(graph, start, end, td, time = [], path=[], allpaths=[]):
           shortest = newpath
           shortTime = newtime
   return shortest,shortTime,allpaths
-
-num_nodes = 8;
-max_occur = 180;
-#dirname = "/home/xfatema/cps-m3/";
-fatema_dirname = "C:\\Users\\Fatema Almeshqab\\Desktop\\CMUbility\\data_m3_test1\\";
-tyler_dirname = "/Users/Tyler/Documents/GitHub/CMUbility/data_m3_test1/"
-dirname = tyler_dirname
-node_positions = ["n0","n1","n2","n3","n4","n5","n6","n7"]
 
 def generate_paths(avgTime, hour, write=True):
   path_filename = str(hour) + "_paths.json"
@@ -188,6 +180,7 @@ def main():
   AvgTime = defaultdict(dict);
   hours = range(9,21);
   hourlyAvgTime = {x:defaultdict(dict) for x in hours};
+  hourlypath = {x:defaultdict(dict) for x in hours};
 
   for hour in hours:
     for s_node in node_positions:
@@ -239,8 +232,8 @@ def main():
             hourlyAvgTime[hour][s_node] = {} 
             hourlyAvgTime[hour][s_node][e_node] = (mean,mode,median);
 
-    n1_times = [79, 0, 143.78, 158, 80.58, 92.43, 194.34, 180.33];
-    n2_times = [169.43, 143.78, 0, 302.84, 107.44, 171.16, 139.04, 86.9];
+    n1_times = [97, 0, 143.78, 158, 80.58, 92.43, 194.34, 180.33];
+    n2_times = [129.43, 143.78, 0, 302.84, 107.44, 171.16, 139.04, 86.9];
 
     hourlyAvgTime[hour]["n1"] = {};
     hourlyAvgTime[hour]["n2"] = {};
@@ -287,7 +280,7 @@ def main():
     #print ap
     #print hourlyAvgTime[hour];
 
-    generate_paths(hourlyAvgTime[hour],hour);
+    hourlypath[hour] = generate_paths(hourlyAvgTime[hour],hour);
     # for s_node in node_positions:
     #   for e_node in node_positions:
     #     if (s_node != e_node):
@@ -302,6 +295,8 @@ def main():
     #           pathOutput[s_node][e_node] = ap
     # with open('paths.json', 'w') as outfile:
     #   json.dump(pathOutput, outfile)
+  with open('new_paths.json', 'w') as outfile:
+    json.dump(hourlypath, outfile)
 
 if __name__ == '__main__':
     main()

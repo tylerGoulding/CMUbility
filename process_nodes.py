@@ -10,8 +10,8 @@ import json
 graph = {'n0': ['n1','n3','n5'],
          'n1': ['n0','n2','n4','n5'],
          'n2': ['n1','n4','n7'],
-         'n3': ['n0','n4','n5','n6'],
-         'n4': ['n1', 'n2','n3','n5','n7'], #'n1','n2'
+         'n3': ['n0','n5','n6'],
+         'n4': ['n1','n2','n5','n7'], #'n1','n2'
          'n5': ['n0', 'n1','n3','n4','n6'], # 'n1',
          'n6': ['n3','n5','n7'],
          'n7': ['n2','n4','n6'] #'n2',
@@ -238,7 +238,6 @@ def main():
   ap =  find_shortest_path(graph, 'n0', 'n7', avgTime)[2]
   ap.sort(key=lambda x: x[1])
   print ap
-
   generate_paths(avgTime);
   # for s_node in node_positions:
   #   for e_node in node_positions:

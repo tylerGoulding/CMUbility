@@ -126,7 +126,7 @@ Label.prototype.draw = function() {
 
       */
 
-      $.getJSON("file:///C:/Users/Fatema Almeshqab/Desktop/CMUbility/paths.json", function(json) {
+      $.getJSON("file:///C:/Users/Fatema Almeshqab/Desktop/CMUbility/new_paths.json", function(json) {
           pathJSON = json;
           console.log(json); // this will show the info it in firebug console
       });
@@ -209,8 +209,8 @@ Label.prototype.draw = function() {
         var time_select = document.getElementById("time");
         var hour = time_select.options[time_select.selectedIndex].value;
         
-        var currentPath = pathJSON[start][end][1][0];
-        var currentTime = pathJSON[start][end][1][1];
+        var currentPath = pathJSON[hour][start][end][1][0];
+        var currentTime = pathJSON[hour][start][end][1][1];
         console.log(currentTime)
         var rP = [];
         var pathLen = currentPath.length;
@@ -224,8 +224,8 @@ Label.prototype.draw = function() {
         routePath1.setPath(rP);
         routePath1.setMap(map);
 
-        var currentPath = pathJSON[start][end][2][0];
-        var currentTime = pathJSON[start][end][2][1];
+        var currentPath = pathJSON[hour][start][end][2][0];
+        var currentTime = pathJSON[hour][start][end][2][1];
         console.log(currentTime)
         var rP = [];
         var pathLen = currentPath.length;
@@ -238,8 +238,8 @@ Label.prototype.draw = function() {
         console.log(rP);
         routePath2.setPath(rP);
         routePath2.setMap(map);
-        var currentPath = pathJSON[start][end][0][0];
-        var currentTime = pathJSON[start][end][0][1];
+        var currentPath = pathJSON[hour][start][end][0][0];
+        var currentTime = pathJSON[hour][start][end][0][1];
         console.log(currentTime)
         var rP = [];
         var pathLen = currentPath.length;
@@ -747,7 +747,6 @@ function generatePath() {
                 e_density = (e_density*8)/10
             for (var point = 0; point < generated_paths[p1][p2].length; point++) {
                 f = point/generated_paths[p1][p2].length;
- 
                 data.push({location: generated_paths[p1][p2][point], weight: lerp(s_density, e_density, f)});
             }
           }
