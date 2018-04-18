@@ -521,8 +521,33 @@
 
       }
 function generatePath() {
-    var path = [nodes[0], nodes[1]];
 
+  //var path = [nodes[0], nodes[0]];
+  var graph = [[nodes[1],nodes[3],nodes[5]], [nodes[2],nodes[4],nodes[5]], [nodes[4],nodes[7]],
+               [nodes[4],nodes[5],nodes[6]], [nodes[5],nodes[7]],[nodes[6]], [nodes[7]]];
+
+  generated_paths = Array(graph.length);
+  for (var p1 = 0; p1 < graph.length; p1++) {
+    generated_paths[p1] = Array(graph[p1].length);
+    for (var p2 = 0; p2 < graph[p1].length; p2++) {
+      generated_paths[p1][p2] = [];
+    }
+  }
+
+  for (var p1 = 0; p1 < graph.length; p1++) {
+    for (var p2 = 0; p2 < graph[p1].length; p2++) {
+      var distance = Math.trunc(google.maps.geometry.spherical.computeDistanceBetween(nodes[p1], graph[p1][p2])); //should be in meters
+      console.log(distance);
+      for (var point = 0; point < distance; point++) {
+        var step = 1/distance;
+        generated_paths[p1][p2].push(google.maps.geometry.spherical.interpolate(nodes[p1], graph[p1][p2], step*point));
+      }
+    } 
+    //console.log(generated_paths)
+  }
+
+
+  /*
   step = .025;
   n0ton1 = [];
   for (i = 0; i < 41; i++) { 
@@ -545,7 +570,7 @@ function generatePath() {
   n2ton3 = [];
   for (i = 0; i < 41; i++) { 
     n2ton3.push(google.maps.geometry.spherical.interpolate(path[0], path[1], step*i));
-  }
+  } */
 }
 
       function getPoints() {
@@ -560,8 +585,17 @@ function generatePath() {
         var data = [        
                 
         ];
-        var path = [];
+        //var path = [];
         // var middle = google.maps.geometry.spherical.interpolate(path[0], path[1], .5);
+        for (var p1 = 0; p1 < generated_paths.length; p1++) {
+          for (var p2 = 0; p2 < generated_paths[p1].length; p2++) {
+            for (var point = 0; point < generated_paths[p1][p2].length; point++) {
+                data.push({location: generated_paths[p1][p2][point], weight: 4});
+            }
+          }
+        }
+
+        /*
         for (i = 0; i < n0ton1.length; i++) { 
           data.push({location: n0ton1[i], weight: .4});
         }
@@ -574,6 +608,7 @@ function generatePath() {
         for (i = 0; i < n2ton3.length; i++) { 
           data.push({location: n2ton3[i], weight: .9});
         }
+        */
         return data;//[
         // {location: new google.maps.LatLng(40.443393,-79.939046), weight: 100},
 

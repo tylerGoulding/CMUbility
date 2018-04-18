@@ -32,8 +32,6 @@ class Graph:
             for e in dictionary[s]:
                 self.add_edge(n,e,timeValues[s][e][2])
 
-
-
     def add_vertex(self, node):
         self.num_vertices = self.num_vertices + 1
         new_vertex = Vertex(node)
