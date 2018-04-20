@@ -662,7 +662,7 @@ Label.prototype.draw = function() {
         heatmap = new google.maps.visualization.HeatmapLayer({
           data: getPoints(hour),
           map: map,
-          radius: 18,
+          radius: 25,
           opacity:.5,
           dissipating: true
           // gradient: Ggradient
@@ -740,11 +740,11 @@ function generatePath() {
         for (var p1 = 0; p1 < generated_paths.length; p1++) {
           p1_node = 'n' + p1;
           s_density = densityJSON[p1_node][hour];
-          s_density = (s_density*8)/10
+          s_density = s_density*1000
           for (var p2 = 0; p2 < generated_paths[p1].length; p2++) {
             p2_node = 'n' + nodes.indexOf(graph[p1][p2]);
             e_density = densityJSON[p2_node][hour];
-                e_density = (e_density*8)/10
+                e_density = e_density*1000
             for (var point = 0; point < generated_paths[p1][p2].length; point++) {
                 f = point/generated_paths[p1][p2].length;
                 data.push({location: generated_paths[p1][p2][point], weight: lerp(s_density, e_density, f)});
