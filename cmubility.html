@@ -179,18 +179,26 @@ Label.prototype.draw = function() {
                 fillOpacity: .7,
                 radius: 3
           });
-        var start = document.getElementById("startNode").value;
+        var start_select = document.getElementById("startNode");
+        var start = start_select.options[start_select.selectedIndex].value
         if(!re.test(start)){
           alert("Please properly fill all required fields");
           return false;
         }
-        var end = document.getElementById("endNode").value;
+        var end_select = document.getElementById("endNode");
+        var end = end_select.options[end_select.selectedIndex].value
         if(!re.test(start)){
           alert("Please properly fill all required fields");
           return false;
         }
         s_node = start.substring(1,2);
         e_node = end.substring(1,2);
+
+        if (s_node == e_node) {
+          alert("source and destination must be different");
+          return false;
+        }
+
         node_circles[s_node].setOptions({
                         fillColor: 'green',
                         strokeColor: 'green',
@@ -238,6 +246,7 @@ Label.prototype.draw = function() {
         console.log(rP);
         routePath2.setPath(rP);
         routePath2.setMap(map);
+
         var currentPath = pathJSON[hour][start][end][0][0];
         var currentTime = pathJSON[hour][start][end][0][1];
         console.log(currentTime)
@@ -276,9 +285,29 @@ Label.prototype.draw = function() {
                  <form class="form">
                   <div class="form-group ">
                     <label for="startNode">Starting Node:</label>
-                    <input type="text" class="form-control" id="startNode" placeholder="nX">
+                    <!--<input type="text" class="form-control" id="startNode" placeholder="nX">-->
+                    <select class=form-control id="startNode">
+                      <option value=n0>Forbes and Beeler/East Garage</option>
+                      <option value=n1>Weigand Gym</option>
+                      <option value=n2>Warner Hall</option>
+                      <option value=n3>Soccer Field</option>
+                      <option value=n4>CUC/Entropy</option>
+                      <option value=n5>Resnik House</option>
+                      <option value=n6>Margaret Morrison/School of Design</option>
+                      <option value=n7>Doherty Hall</option>
+                    </select>
                     <label for="endNode">Ending Node: </label>
-                    <input type="text" class="form-control" id="endNode" placeholder="nY">
+                    <!--<input type="text" class="form-control" id="endNode" placeholder="nY">-->
+                    <select class=form-control id="endNode">
+                      <option value=n0>Forbes and Beeler/East Garage</option>
+                      <option value=n1>Weigand Gym</option>
+                      <option value=n2>Warner Hall</option>
+                      <option value=n3>Soccer Field</option>
+                      <option value=n4>CUC/Entropy</option>
+                      <option value=n5>Resnik House</option>
+                      <option value=n6>Margaret Morrison/School of Design</option>
+                      <option value=n7>Doherty Hall</option>
+                    </select>
                     <label for="time">Select Time:</label>
                     <select class="form-control" id="time" onchange="updateHeatmap();">
                       <option value=9>9:00</option>
