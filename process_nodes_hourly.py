@@ -155,8 +155,8 @@ def main():
     #if (hour_list[2][1][item] < 0): hour_list[2][1][item] = 0;
   
   #taken from 1 random iteration from the code above
-  n1_density = [(9,602), (10,308), (11,631), (12,617), (13,770), (14,409), (15,533), (16,953), (17,801), (18,597), (19,727), (20,147)]
-  n2_density = [(9,825), (10,482), (11,653), (12,1030), (13,1072), (14,977), (15,1022), (16,1238), (17,1048), (18,861), (19,703), (20,396)]
+  n1_density = [(9,102), (10,308), (11,631), (12,617), (13,770), (14,409), (15,533), (16,953), (17,801), (18,597), (19,427), (20,147)]
+  n2_density = [(9,625), (10,382), (11,653), (12,1030), (13,1072), (14,977), (15,522), (16,738), (17,1148), (18,861), (19,703), (20,396)]
 
   for time, density in n1_density:
     hour_list[1][1][time] = density;
@@ -214,15 +214,15 @@ def main():
           weight = 0;
           if hour in all_hours_dict[s_node]:
             if (all_hours_dict[s_node][hour] < 300):
-              weight -= 5;
+              weight -= (8 - all_hours_dict[s_node][hour]/100);
             if (all_hours_dict[s_node][hour] > 900):
-              weight += 5;
+              weight += all_hours_dict[s_node][hour]/100 - 2;
 
           if hour in all_hours_dict[e_node]:
             if (all_hours_dict[e_node][hour] < 300):
-              weight -= 5;
+              weight -= (8 - all_hours_dict[e_node][hour]/100);
             if (all_hours_dict[e_node][hour] > 900):
-              weight += 5;
+              weight += all_hours_dict[e_node][hour]/100 - 2;
 
           median += weight; 
           if s_node in hourlyAvgTime[hour]:
@@ -251,14 +251,14 @@ def main():
 
         if hour in all_hours_dict[missing_node]:
           if (all_hours_dict[missing_node][hour] < 300):
-            weight -= 5;
+            weight -= (8 - all_hours_dict[missing_node][hour]/100);
             if (all_hours_dict[missing_node][hour] > 900):
-              weight += 5;
+              weight += all_hours_dict[missing_node][hour]/100 - 2;
         if hour in all_hours_dict[node]:
           if (all_hours_dict[node][hour] < 300):
-              weight -= 5;
+              weight -= (8 - all_hours_dict[node][hour]/100);
               if (all_hours_dict[node][hour] > 900):
-                weight += 5;
+                weight += all_hours_dict[node][hour]/100 - 2;
 
         node_time += weight
         hourlyAvgTime[hour][node][missing_node] = (0,0,node_time);

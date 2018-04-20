@@ -658,14 +658,13 @@ Label.prototype.draw = function() {
         var time_select = document.getElementById("time");
         var hour = time_select.options[time_select.selectedIndex].value;
         //var hour = 9 //document.getElementById("time");
-        console.log(hour)
         heatmap = new google.maps.visualization.HeatmapLayer({
           data: getPoints(hour),
           map: map,
-          radius: 25,
+          radius: 17,
           opacity:.5,
           dissipating: true
-          // gradient: Ggradient
+          //gradient: Ggradient
         });
       }
 
@@ -692,41 +691,29 @@ function generatePath() {
 
   for (var p1 = 0; p1 < graph.length; p1++) {
     for (var p2 = 0; p2 < graph[p1].length; p2++) {
-      var distance = Math.trunc(google.maps.geometry.spherical.computeDistanceBetween(nodes[p1], graph[p1][p2])/4); //should be in meters
+      var distance = Math.trunc(google.maps.geometry.spherical.computeDistanceBetween(nodes[p1], graph[p1][p2])); //should be in meters
       console.log(distance);
-      for (var point = 0; point < distance; point++) {
-        var step = 1/distance;
+      long_distance = Math.trunc(distance/3);
+      short_distance = Math.trunc(distance/15);
+      for (var point = 0; point < short_distance; point++) {
+        var step = 1/short_distance;
         generated_paths[p1][p2].push(google.maps.geometry.spherical.interpolate(nodes[p1], graph[p1][p2], step*point));
       }
+      for (var point = 0; point < long_distance; point++) {
+        var step = 1/long_distance //+ (Math.random()*0.1-0.1);
+        var start = nodes[p1];
+        var new_lat = start.lat()+(Math.random()*0.00012-0.00012);
+        var new_lng = start.lng()+(Math.random()*0.00012-0.00012);
+        var new_start = new google.maps.LatLng(new_lat, new_lng);
+        var end = graph[p1][p2];
+        new_lat = end.lat()+(Math.random()*0.00012-0.00012);
+        new_lng = end.lng()+(Math.random()*0.00012-0.00012);
+        var new_end = new google.maps.LatLng(new_lat, new_lng);
+        generated_paths[p1][p2].push(google.maps.geometry.spherical.interpolate(new_start, new_end, step*point));
+      }
     } 
-    //console.log(generated_paths)
   }
 
-
-  /*
-  step = .025;
-  n0ton1 = [];
-  for (i = 0; i < 41; i++) { 
-    n0ton1.push(google.maps.geometry.spherical.interpolate(path[0], path[1], step*i));
-  }
-  path = [nodes[0], nodes[2]];
-  step = .025;
-  n0ton2 = [];
-  for (i = 0; i < 41; i++) { 
-    n0ton2.push(google.maps.geometry.spherical.interpolate(path[0], path[1], step*i));
-  }
-  path = [nodes[1], nodes[2]];
-  step = .025;
-  n1ton2 = [];
-  for (i = 0; i < 41; i++) { 
-    n1ton2.push(google.maps.geometry.spherical.interpolate(path[0], path[1], step*i));
-  }
-  path = [nodes[2], nodes[3]];
-  step = .025;
-  n2ton3 = [];
-  for (i = 0; i < 41; i++) { 
-    n2ton3.push(google.maps.geometry.spherical.interpolate(path[0], path[1], step*i));
-  } */
 }
       function lerp(a, b, f) {
           return a + f * (b - a);
@@ -735,29 +722,29 @@ function generatePath() {
         var data = [        
                 
         ];
-        //var path = [];
-        // var middle = google.maps.geometry.spherical.interpolate(path[0], path[1], .5);
         for (var p1 = 0; p1 < generated_paths.length; p1++) {
           p1_node = 'n' + p1;
           s_density = densityJSON[p1_node][hour];
-          s_density = s_density*1000
+          var e_density_all = [];
+          var e_density_sum = 0;
+          /*for (var p2 = 0; p2 < generated_paths[p1].length; p2++) {
+            p2_node = 'n' + nodes.indexOf(graph[p1][p2]);
+            e_density = densityJSON[p2_node][hour];
+            e_density_all.push(e_density);
+            e_density_sum += e_density;
+          }*/
           for (var p2 = 0; p2 < generated_paths[p1].length; p2++) {
             p2_node = 'n' + nodes.indexOf(graph[p1][p2]);
             e_density = densityJSON[p2_node][hour];
-                e_density = e_density*1000
             for (var point = 0; point < generated_paths[p1][p2].length; point++) {
-                f = point/generated_paths[p1][p2].length;
-                data.push({location: generated_paths[p1][p2][point], weight: lerp(s_density, e_density, f)});
+            	f = point/generated_paths[p1][p2].length;
+                data.push({location: generated_paths[p1][p2][point],
+                		   weight: lerp(s_density, e_density/generated_paths[p1].length, f)});
             }
           }
         }
 
         /*
-=======
-        f = 1/n0ton1.length;
-        n0 = 2.4
-        n1 = 6.0
->>>>>>> origin/master
         for (i = 0; i < n0ton1.length; i++) { 
           f = i/n0ton1.length;
           data.push({location: n0ton1[i], weight: lerp(n0, n1, f)});
