@@ -229,7 +229,8 @@
         routelabel.bindTo('position', labelMarker, 'position');
         var currentMinutes0 = Math.floor(currentTime0/60);
         var currentSeconds0 = Math.trunc(currentTime0) - currentMinutes0*60
-        routelabel.set('text', currentMinutes0.toString() + ':' + currentSeconds0.toString() + ' minutes');
+        var currentSeconds0String = currentSeconds0.toString().padStart(2, "0");
+        routelabel.set('text', currentMinutes0.toString() + ':' + currentSeconds0String+ ' minutes');
         routelabel.setMap(map);
           console.log("--post calc---")
           console.log(labelMarker.position.lat())
@@ -712,7 +713,8 @@ Label.prototype.draw = function() {
           labelMarker.setPosition(inBetween);
           var currentMinutes_0 = Math.floor(currentTimes[0]/60);
           var currentSeconds_0 = Math.trunc(currentTimes[0]) - currentMinutes_0*60
-          routelabel.set('text', currentMinutes_0.toString() + ':' + currentSeconds_0.toString() + ' minutes');
+        var currentSeconds0String = currentSeconds_0.toString().padStart(2, "0");
+        routelabel.set('text', currentMinutes0.toString() + ':' + currentSeconds0String+ ' minutes');
           //routelabel.set('text', currentTimes[0].toString() + ' seconds');
 
 
@@ -731,8 +733,8 @@ Label.prototype.draw = function() {
           labelMarker.setPosition(inBetween);
           var currentMinutes1 = Math.floor(currentTimes[1]/60);
           var currentSeconds1 = Math.trunc(currentTimes[1]) - currentMinutes1*60
-          routelabel.set('text', currentMinutes1.toString() + ':' + currentSeconds1.toString() + ' minutes');
-          //routelabel.set('text', currentTimes[1].toString() + ' seconds');
+        var currentSeconds1String = currentSeconds1.toString().padStart(2, "0");
+        routelabel.set('text', currentMinutes1.toString() + ':' + currentSeconds1String+ ' minutes');          //routelabel.set('text', currentTimes[1].toString() + ' seconds');
           // routelabel.setMap(map);
 
 
@@ -752,7 +754,8 @@ Label.prototype.draw = function() {
           labelMarker.setPosition(inBetween);
           var currentMinutes2 = Math.floor(currentTimes[2]/60);
           var currentSeconds2 = Math.trunc(currentTimes[2]) - currentMinutes2*60
-          routelabel.set('text', currentMinutes2.toString() + ':' + currentSeconds2.toString() + ' minutes');
+        var currentSeconds2String = currentSeconds2.toString().padStart(3, "0");
+        routelabel.set('text', currentMinutes2.toString() + ':' + currentSeconds2String+ ' minutes');
           //routelabel.set('text', currentTimes[2].toString() + ' seconds');
           // routelabel.setMap(map);
 
