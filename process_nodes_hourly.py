@@ -22,7 +22,7 @@ max_occur = 180;
 #dirname = "/home/xfatema/cps-m3/";
 fatema_dirname = "C:\\Users\\Fatema Almeshqab\\Desktop\\CMUbility\\data_m3_test1\\";
 tyler_dirname = "/Users/Tyler/Documents/GitHub/CMUbility/data_m3_test1/"
-dirname = fatema_dirname
+dirname = tyler_dirname
 node_positions = ["n0","n1","n2","n3","n4","n5","n6","n7"]
 
 def find_shortest_path(graph, start, end, td, time = [], path=[], allpaths=[]):
@@ -70,6 +70,7 @@ def main():
   hour_list = [("n" + str(x), defaultdict(int)) for x in xrange(num_nodes)];  
   time_dict = defaultdict(dict);
   #loop through all nodes
+  file = ""
   for i in xrange(num_nodes):
     node_id = str.format('n{}',i);
     for filename in os.listdir(dirname):
@@ -224,7 +225,7 @@ def main():
             if (all_hours_dict[e_node][hour] > 900):
               weight += all_hours_dict[e_node][hour]/100.0 - 4;
 
-          median += weight; 
+          median += weight/2; 
           if s_node in hourlyAvgTime[hour]:
             hourlyAvgTime[hour][s_node][e_node] = (mean,mode,median);
 
@@ -260,7 +261,7 @@ def main():
               if (all_hours_dict[node][hour] > 900):
                 weight += all_hours_dict[node][hour]/100.0 - 4;
 
-        node_time += weight
+        node_time += weight/2
         hourlyAvgTime[hour][node][missing_node] = (0,0,node_time);
         hourlyAvgTime[hour][missing_node][node] = (0,0,node_time);
 

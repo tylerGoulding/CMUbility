@@ -711,9 +711,9 @@ Label.prototype.draw = function() {
             inBetween = currentPaths[0][Math.floor(currentPaths[0].length/2)]; //google.maps.geometry.spherical.interpolate(rP[0], rP.last(), 0.5);  
           }
           labelMarker.setPosition(inBetween);
-          var currentMinutes_0 = Math.floor(currentTimes[0]/60);
-          var currentSeconds_0 = Math.trunc(currentTimes[0]) - currentMinutes_0*60
-        var currentSeconds0String = currentSeconds_0.toString().padStart(2, "0");
+          var currentMinutes0 = Math.floor(currentTimes[0]/60);
+          var currentSeconds0 = Math.trunc(currentTimes[0]) - currentMinutes0*60
+        var currentSeconds0String = currentSeconds0.toString().padStart(2, "0");
         routelabel.set('text', currentMinutes0.toString() + ':' + currentSeconds0String+ ' minutes');
           //routelabel.set('text', currentTimes[0].toString() + ' seconds');
 
