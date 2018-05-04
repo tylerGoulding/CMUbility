@@ -57,27 +57,43 @@
               return this[this.length - 1];
           };
       };
-      
-      // $.getJSON("/Users/Tyler/Documents/GitHub/CMUbility/new_paths.json", function(json) {
+      // new Date().toLocaleTimeString();
+
+      $( document ).ready(function() {
+        $("#ct").text = new Date().toLocaleTimeString();
+        $("#ct").value = new Date().getHours();
+      });
+      // $.getJSON("new_paths.json", function(json) {
       //     pathJSON = json;
       //     console.log(json); // this will show the info it in firebug console
       // }); 
 
-      // $.getJSON("/Users/Tyler/Documents/GitHub/CMUbility/density_per_hour.json", function(density) {
+      // $.getJSON("density_per_hour.json", function(density) {
       //     densityJSON = density;
       //     console.log(density); // this will show the info it in firebug console
       // }); 
 
       
-      $.getJSON("file:///C:/Users/Fatema Almeshqab/Desktop/CMUbility/new_paths.json", function(json) {
+      $.getJSON("/Users/Tyler/Documents/GitHub/CMUbility/new_paths.json", function(json) {
           pathJSON = json;
           console.log(json); // this will show the info it in firebug console
-      });
+      }); 
 
-      $.getJSON("file:///C:/Users/Fatema Almeshqab/Desktop/CMUbility/density_per_hour.json", function(density) {
+      $.getJSON("/Users/Tyler/Documents/GitHub/CMUbility/density_per_hour.json", function(density) {
           densityJSON = density;
           console.log(density); // this will show the info it in firebug console
-      });
+      }); 
+
+      
+      // $.getJSON("file:///C:/Users/Fatema Almeshqab/Desktop/CMUbility/new_paths.json", function(json) {
+      //     pathJSON = json;
+      //     console.log(json); // this will show the info it in firebug console
+      // });
+
+      // $.getJSON("file:///C:/Users/Fatema Almeshqab/Desktop/CMUbility/density_per_hour.json", function(density) {
+      //     densityJSON = density;
+      //     console.log(density); // this will show the info it in firebug console
+      // });
 
       re = new RegExp("^([n][0-9])$");
       currentPaths = [];
@@ -282,6 +298,7 @@
                     </select>
                     <label for="time">Select Time:</label>
                     <select class="form-control" id="time" onchange="updateHeatmap();">
+                      <option value=10 id="ct"></option>                      
                       <option value=9>9:00</option>
                       <option value=10>10:00</option>
                       <option value=11>11:00</option>
@@ -293,7 +310,7 @@
                       <option value=17>17:00</option>
                       <option value=18>18:00</option>
                       <option value=19>19:00</option>
-                      <option value=20>20:00</option>
+                      <!-- <option value=20>20:00</option> -->
                     </select>
                   </div>
                   <button type='button' class="btn btn-default" onClick="calcRoute()">Compute Route</button>
@@ -405,7 +422,7 @@ Label.prototype.draw = function() {
         nodes = [
           new google.maps.LatLng(40.443393,-79.939046), //n0 
           new google.maps.LatLng(40.443492,-79.941360), //n1
-          new google.maps.LatLng(40.444303, -79.943086), //n2
+          new google.maps.LatLng(40.444010, -79.943133), //n2
           new google.maps.LatLng(40.442254,-79.939639), //n3
           new google.maps.LatLng(40.442880,-79.942732), //n5
           new google.maps.LatLng(40.442498,-79.940475), //n4
@@ -754,7 +771,7 @@ Label.prototype.draw = function() {
           labelMarker.setPosition(inBetween);
           var currentMinutes2 = Math.floor(currentTimes[2]/60);
           var currentSeconds2 = Math.trunc(currentTimes[2]) - currentMinutes2*60
-        var currentSeconds2String = currentSeconds2.toString().padStart(3, "0");
+        var currentSeconds2String = currentSeconds2.toString().padStart(2, "0");
         routelabel.set('text', currentMinutes2.toString() + ':' + currentSeconds2String+ ' minutes');
           //routelabel.set('text', currentTimes[2].toString() + ' seconds');
           // routelabel.setMap(map);
