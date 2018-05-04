@@ -265,37 +265,8 @@ def main():
         hourlyAvgTime[hour][node][missing_node] = (0,0,node_time);
         hourlyAvgTime[hour][missing_node][node] = (0,0,node_time);
 
-    #fill in n2
-    #for i,node in enumerate(node_positions):
-      #if (node == "n2"): continue
-      #hourlyAvgTime[hour][node]["n2"] = n2_times[i];
-      #hourlyAvgTime[hour]["n2"][node] = n2_times[i];
-
-    #json_data = json.dumps(hourlyAvgTime[hour])
-    #with open('average_times.json', 'w') as outfile:
-    #  json.dump(hourlyAvgTime[hour], outfile)
-    #print json.dumps(json.loads(json_data), indent=2)
-
-    #ap =  find_shortest_path(graph, 'n0', 'n7', hourlyAvgTime[hour])[2]
-    #ap.sort(key=lambda x: x[1])
-    #print ap
-    #print hourlyAvgTime[hour];
 
     hourlypath[hour] = generate_paths(hourlyAvgTime[hour],hour);
-    # for s_node in node_positions:
-    #   for e_node in node_positions:
-    #     if (s_node != e_node):
-    #       ap =  find_shortest_path(graph, s_node, e_node, avgTime)
-    #       print ap
-    #       if ap[0] != None:
-    #         ap = ap[2]
-    #         ap.sort(key=lambda x: x[1])
-    #         if len(ap) >=3:
-    #           pathOutput[s_node][e_node] = ap[:3]
-    #         else:
-    #           pathOutput[s_node][e_node] = ap
-    # with open('paths.json', 'w') as outfile:
-    #   json.dump(pathOutput, outfile)
   with open('new_paths.json', 'w') as outfile:
     json.dump(hourlypath, outfile)
 

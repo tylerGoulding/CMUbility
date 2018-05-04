@@ -57,12 +57,7 @@
               return this[this.length - 1];
           };
       };
-      // new Date().toLocaleTimeString();
 
-      $( document ).ready(function() {
-        $("#ct").text = new Date().toLocaleTimeString();
-        $("#ct").value = new Date().getHours();
-      });
       // $.getJSON("new_paths.json", function(json) {
       //     pathJSON = json;
       //     console.log(json); // this will show the info it in firebug console
@@ -74,26 +69,26 @@
       // }); 
 
       
-      $.getJSON("/Users/Tyler/Documents/GitHub/CMUbility/new_paths.json", function(json) {
-          pathJSON = json;
-          console.log(json); // this will show the info it in firebug console
-      }); 
-
-      $.getJSON("/Users/Tyler/Documents/GitHub/CMUbility/density_per_hour.json", function(density) {
-          densityJSON = density;
-          console.log(density); // this will show the info it in firebug console
-      }); 
-
-      
-      // $.getJSON("file:///C:/Users/Fatema Almeshqab/Desktop/CMUbility/new_paths.json", function(json) {
+      // $.getJSON("/Users/Tyler/Documents/GitHub/CMUbility/new_paths.json", function(json) {
       //     pathJSON = json;
       //     console.log(json); // this will show the info it in firebug console
-      // });
+      // }); 
 
-      // $.getJSON("file:///C:/Users/Fatema Almeshqab/Desktop/CMUbility/density_per_hour.json", function(density) {
+      // $.getJSON("/Users/Tyler/Documents/GitHub/CMUbility/density_per_hour.json", function(density) {
       //     densityJSON = density;
       //     console.log(density); // this will show the info it in firebug console
-      // });
+      // }); 
+
+      
+      $.getJSON("file:///C:/Users/Fatema Almeshqab/Desktop/CMUbility/new_paths.json", function(json) {
+          pathJSON = json;
+          console.log(json); // this will show the info it in firebug console
+      });
+
+      $.getJSON("file:///C:/Users/Fatema Almeshqab/Desktop/CMUbility/density_per_hour.json", function(density) {
+          densityJSON = density;
+          console.log(density); // this will show the info it in firebug console
+      });
 
       re = new RegExp("^([n][0-9])$");
       currentPaths = [];
@@ -298,7 +293,6 @@
                     </select>
                     <label for="time">Select Time:</label>
                     <select class="form-control" id="time" onchange="updateHeatmap();">
-                      <option value=10 id="ct"></option>                      
                       <option value=9>9:00</option>
                       <option value=10>10:00</option>
                       <option value=11>11:00</option>
@@ -310,7 +304,6 @@
                       <option value=17>17:00</option>
                       <option value=18>18:00</option>
                       <option value=19>19:00</option>
-                      <!-- <option value=20>20:00</option> -->
                     </select>
                   </div>
                   <button type='button' class="btn btn-default" onClick="calcRoute()">Compute Route</button>
