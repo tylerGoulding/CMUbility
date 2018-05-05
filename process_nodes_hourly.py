@@ -1,3 +1,18 @@
+'''
+process_nodes_hourly.py
+
+Generates JSON files that are visualized by cmubility.html
+The function takes in data collected from the sensor nodes and processes it to calculate path time
+and foot traffic density on an hourly basis.
+
+
+'''
+
+
+
+
+
+
 import os
 import collections
 from collections import Counter, defaultdict
@@ -8,6 +23,8 @@ import numpy as np
 import json
 from scipy import stats
 
+
+GLOBAL_WRITE = False
 # each key in the graph correspond to a point of deployment on campus
 # the list of values for each key are its immediate neighbors 
 graph = {'n0': ['n1','n3','n5'],
@@ -275,11 +292,12 @@ def main():
     # now that time estimations are available, use them as weights to the edges 
     # in the graph to generate the most optimal paths between nodes
     # while account for path differences depending on time of the day
-    hourlypath[hour] = generate_paths(hourlyAvgTime[hour], hour);
+    hourlypath[hour] = generate_paths(hourlyAvgTime[hour], hour,write = GLOBAL_WRITE);
   
   # saves all paths between every two nodes in JSON file to load in html.
-  with open('new_paths.json', 'w') as outfile:
-    json.dump(hourlypath, outfile)
+  if GLOBAL_WRITE is True:
+    with open('new_paths.json', 'w') as outfile:
+      json.dump(hourlypath, outfile)
   print "Done"
 
 if __name__ == '__main__':
