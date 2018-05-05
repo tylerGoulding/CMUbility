@@ -32,7 +32,7 @@ high_density = 900;
 
 fatema_dirname = "C:\\Users\\Fatema Almeshqab\\Desktop\\CMUbility\\data_m3_test1\\";
 tyler_dirname = "/Users/Tyler/Documents/GitHub/CMUbility/data_m3_test1/"
-dirname = fatema_dirname
+dirname = tyler_dirname
 node_positions = ["n0","n1","n2","n3","n4","n5","n6","n7"]
 
 def find_shortest_path(graph, start, end, td, time = [], path=[], allpaths=[]):
@@ -51,6 +51,8 @@ def find_shortest_path(graph, start, end, td, time = [], path=[], allpaths=[]):
   shortTime = [100000000]
   for node in graph[start]:
     if node not in path:
+      if node not in td[start].keys():
+        continue;
       time2 = time + [td[start][node][2]]
       newpath,newtime = find_shortest_path(graph, node, end,td, time2, path,allpaths)[:2]
       if newpath:
@@ -118,16 +120,19 @@ def generate_blacklist(f):
 
   return black_list;
 
-def calculate_time_difference(time_dict, k, s_node, e_node):                
-    sNode = max(time_dict[k][s_node], key=lambda x: x[1])
-    sNode_time = datetime.strptime(sNode[0], '%H:%M:%S.%f')
-    eNode = max(time_dict[k][e_node], key=lambda x: x[1])
-    eNode_time = datetime.strptime(eNode[0], '%H:%M:%S.%f')
-    diff = sNode_time - eNode_time
-    diff = abs(diff.total_seconds())
+def calculate_time_difference(time_dict, k, s_node, e_node):
+  """ calculates the difference in time between two nodes for a given ID."""                
+  sNode = max(time_dict[k][s_node], key=lambda x: x[1])
+  sNode_time = datetime.strptime(sNode[0], '%H:%M:%S.%f')
+  eNode = max(time_dict[k][e_node], key=lambda x: x[1])
+  eNode_time = datetime.strptime(eNode[0], '%H:%M:%S.%f')
+  diff = sNode_time - eNode_time
+  diff = abs(diff.total_seconds())
 
 
 def estimate_walk_time(start2end_time, all_hours_dict, hour, s_node, e_node):
+  """ estimates the time to walk between two nodes based off of the density
+  at that time and the median path value cacluated."""
   a = np.array(start2end_time)
   mean = np.mean(a)
   mode = stats.mode(a) 
@@ -259,7 +264,7 @@ def main():
         # find the mean and median of the set of time differences 
         # based on all addresses sniffed by both nodes, for better time estimation 
         if (s_node != e_node) and (start2end_time != []):
-          (mean, mode, median) = estimated_walk_time(start2end_time, all_hours_dict, hour, s_node, e_node);
+          (mean, mode, median) = estimate_walk_time(start2end_time, all_hours_dict, hour, s_node, e_node);
           # add new time estimation to dictionary;
           if s_node in hourlyAvgTime[hour]:
             hourlyAvgTime[hour][s_node][e_node] = (mean,mode,median);
@@ -275,6 +280,7 @@ def main():
   # saves all paths between every two nodes in JSON file to load in html.
   with open('new_paths.json', 'w') as outfile:
     json.dump(hourlypath, outfile)
+  print "Done"
 
 if __name__ == '__main__':
     main()
