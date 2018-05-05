@@ -80,21 +80,23 @@
       // }); 
 
       
-      $.getJSON("file:///C:/Users/Fatema Almeshqab/Desktop/CMUbility/new_paths.json", function(json) {
-          pathJSON = json;
-          console.log(json); // this will show the info it in firebug console
-      });
+      // $.getJSON("file:///C:/Users/Fatema Almeshqab/Desktop/CMUbility/new_paths.json", function(json) {
+      //     pathJSON = json;
+      //     console.log(json); // this will show the info it in firebug console
+      // });
 
-      $.getJSON("file:///C:/Users/Fatema Almeshqab/Desktop/CMUbility/density_per_hour.json", function(density) {
-          densityJSON = density;
-          console.log(density); // this will show the info it in firebug console
-      });
+      // $.getJSON("file:///C:/Users/Fatema Almeshqab/Desktop/CMUbility/density_per_hour.json", function(density) {
+      //     densityJSON = density;
+      //     console.log(density); // this will show the info it in firebug console
+      // });
 
       re = new RegExp("^([n][0-9])$");
       currentPaths = [];
       currentTimes = [];
       s_node = 0;
       e_node = 0;
+
+      // clear route resets the poly line and hides it from view
       function clearRoute(){
         node_circles[e_node].setOptions({
                 strokeColor: '#FFFFFF',
@@ -118,17 +120,21 @@
         routelabel.setMap(null);
         $( 'button.clear' ).attr( 'disabled', true);
       }
+
+      // calcRoute is called when a user requests a route between two points on the map
       function calcRoute() {
           console.log("--pre calc---")
           console.log(labelMarker.position.lat())
           console.log(labelMarker.position.lng())
           console.log("-----")
 
+          // clear whatever previous route existed
           clearRoute();
+          // reset the colors to the regular color scheme
           routePath1.setOptions({ strokeColor: '#AAAAAA',strokeOpacity: 0.6,strokeWeight: 6, zIndex: 10});
           routePath2.setOptions({ strokeColor: '#AAAAAA',strokeOpacity: 0.6,strokeWeight: 6, zIndex: 10});
           routePath0.setOptions({ strokeColor: '#1E90FF',strokeOpacity: 1,strokeWeight: 8, zIndex: 15});
-
+          // reset the all nodes to white
           node_circles[s_node].setOptions({
                 strokeColor: '#FFFFFF',
                 strokeOpacity: 0.5,
@@ -268,7 +274,6 @@
                  <form class="form">
                   <div class="form-group ">
                     <label for="startNode">Starting Node:</label>
-                    <!--<input type="text" class="form-control" id="startNode" placeholder="nX">-->
                     <select class=form-control id="startNode">
                       <option value=n0>Forbes and Beeler/East Garage</option>
                       <option value=n1>Weigand Gym</option>
